@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         const prefetchHtml0 = document.createElement('link');
         prefetchHtml0.rel = 'prefetch';
-        prefetchHtml0.href = 'html_0.html';
+        prefetchHtml0.href = 'ru/book1/html_0.html';
         document.head.appendChild(prefetchHtml0);
     }, 2000); // Ждем 2 секунды после входа, чтобы не тормозить анимации меню
 
