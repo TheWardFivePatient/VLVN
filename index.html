@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QPC8KW5WGG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-QPC8KW5WGG');
+</script>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ВЛВН — Пациент пятой палаты</title>
+    
+   <!-- Google Fonts: Cormorant Garamond (Заголовки), Lora (Текст), Courier Prime (Акценты), Great Vibes (Декор) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/menu.css">
+
+<link rel="apple-touch-icon" sizes="180x180" href="img/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="img/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="img/icons/favicon-16x16.png">
+<link rel="manifest" href="img/icons/site.webmanifest">
+</head>
+<body>
+
+    <div id="screen-intro" class="screen active">
+        
+        <!-- 1. ВЕРХ: Название -->
+        <div class="intro-titles">
+            <h1>ВЛВН</h1>
+            <div class="intro-sub">Воплощение любви в обмен на...</div>
+        </div>
+        
+        <!-- 2. ЦЕНТР: Главное действие и Автор -->
+        <div class="intro-action">
+            <div class="click-dive" id="btn-dive">Погрузиться в историю</div>
+            <div class="hint">нажмите, чтобы начать</div>
+            <div class="intro-author">by Пациент пятой палаты</div>
+        </div>
+
+        <!-- 3. НИЗ: Техническая панель языков -->
+        <div class="language-selector footer-logic">
+        
+            <div class="lang-item disabled">
+                <span class="lang-title">
+                    <img src="https://flagcdn.com/w20/ua.png" alt="UA" class="flag-icon"> UA
+                </span>
+                <span class="lang-sub">В розробці</span>
+            </div>
+
+            <div class="lang-line"></div>
+
+            <div class="lang-item disabled">
+                <span class="lang-title">
+                    <img src="https://flagcdn.com/w20/gb.png" alt="EN" class="flag-icon"> EN
+                </span>
+                <span class="lang-sub">Unavailable</span>
+            </div>
+
+            <div class="lang-line"></div>
+
+            <!-- RU (Кликабельный, перезагружает страницу) -->
+            <a href="index.html" class="lang-item active">
+                <span class="lang-title ru-title-container">
+                    <img src="img/icons/ru-flag.webp" alt="RU" class="flag-icon ru-custom-icon"> RU
+                </span>
+                <span class="lang-sub">Доступно</span>
+            </a>
+
+        </div>
+
+    </div>
+
+    <div id="screen-loading" class="screen"></div>
+
+    <div id="screen-menu" class="screen">
+
+        <h2>Выберите книгу</h2>
+        <div class="note-trigger" id="open-note">
+        <span class="trauma">Примечание!</span></div>
+        
+        <ul class="book-list">
+            <li class="book-item" id="book-1">
+                <span class="book-title">Книга первая. Дневник Джессики</span>
+                <div class="book-details">
+                    <p><strong>Жанр:</strong> подростковый психологический триллер в форме современного эпистолярного романа с элементами мета-детектива, Young Adult.</p>
+                    <p><strong>Поджанр:</strong> психологический хоррор с элементами Dark Romance и Dark Academia, философская драма, подростковый нуар.</p>
+                    <p><strong>Возрастное ограничение:</strong> 18+ (16+ — с разрешения родителей)</p>
+                </div>
+            </li>
+            <li class="book-item"><span class="book-title">Книга вторая. Дневник Стефана Стивенсона</span></li>
+            <li class="book-item"><span class="book-title">Книга третья. Дневник Пациента пятой палаты</span></li>
+        </ul>
+
+    <!-- Само окно с инструкцией -->
+    <div id="note-overlay" class="note-overlay">
+<div class="note-content">
+    <div class="note-close" id="close-note">×</div>
+    
+    <div class="note-body">
+        <!-- 1. Красивый строгий (Cormorant) -->
+        <p class="note-greeting">Вас приветствует</p>
+        <p class="note-greeting"><span class="trauma">Пациент пятой палаты</span></p>
+        <!-- 2. Заголовок (Cormorant) -->
+        <h3 class="note-main-title">Инструкция к прочтению:</h3>
+
+        <!-- БЛОК 3 и 4: Подзаголовки (Courier Prime) и Текст (Lora) -->
+        <h4 class="note-label">Хронология</h4>
+        <p class="note-text">Первые две части трилогии — «Дневник Джессики» и «Дневник Стефана Стивенсона» — допускают произвольный порядок изучения. Однако «Дневник Пациента» является ключевым звеном и должен быть прочитан строго финальным в списке.</p>
+
+        <h4 class="note-label">Технические условия</h4>
+        <p class="note-text">Издание оптимизировано для чтения в полноэкранном режиме. На смартфонах рекомендуется использовать вертикальную ориентацию экрана. Для этого нажмите кнопку F11 на клавиатуре или в правом верхнем углу на страницах книги во всплывающей подсказке.</p>
+
+        <h4 class="note-label">Темы</h4>
+        <p class="note-text">В сайдбаре вы можете изменить тему. Нажимайте на Пациента, чтобы применять тёмные темы. Нажимайте на Психиатра, чтобы применять светлые темы.</p>
+
+        <h4 class="note-label">Музыкальные плееры</h4>
+        <p class="note-text">Чтобы слушать полные версии песен через встроенный плеер Spotify, войдите в свой аккаунт в браузере, где читаете книгу, или зарегистрируйтесь.</p>
+
+        <h4 class="note-label">Дисклеймер</h4>
+        <p class="note-text">Все описанные события являются художественным вымыслом. Любые совпадения с реальными людьми, местами и фактами случайны. Автор ведёт безпристрастное повествование: текст не является инструментом пропаганды и не отражает личную позицию автора.</p>
+
+        <!-- 1. Красивый строгий финал (Cormorant) -->
+        <p class="note-final">Приятного погружения!</p>
+
+        <div class="note-divider"></div>
+
+        <!-- КОНТАКТЫ И РЕКВИЗИТЫ -->
+        <div class="note-footer">
+            <h4 class="note-label">Связаться с автором можно через e-mail:</h4>
+            <div class="email-container">
+                <p class="note-text email-copy" id="copy-email" title="Нажмите, чтобы скопировать почту">thewardfivepatient@gmail.com</p>
+                <span id="copy-tooltip" class="copy-tooltip">Скопировано</span>
+            </div>
+
+            <h4 class="note-label">Поддержать проект финансово:</h4>
+            <div class="finance-details note-text">
+                <p>EURO: <span>[Номер счета / IBAN]</span></p>
+                <p>USD: <span>[Номер счета / PayPal]</span></p>
+                <p>UAH: <span>[Номер карты]</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+        
+    </div>
+</div>  
+
+    </div>
+
+    <script src="js/menu.js"></script>
+</body>
+</html>
