@@ -1,0 +1,2041 @@
+/* ==========================================================================
+   I. БАЗА И ПЕРЕМЕННЫЕ (ФУНДАМЕНТ)
+   Здесь закладывается основа для всей невероятной красоты и эстетики.
+   ========================================================================== */
+
+/* 1. Цветовая палитра проекта */
+:root {
+    --bg-color: #0d0d0d;   /* Основной фон (глубокий темный) */
+    --gold: #c5a059;       /* Золотой акцент */
+    --gold-dim: #8a6d3b;   /* Приглушенный золотой для теней и сносок */
+    --text-color: #e0e0e0; /* Светлый цвет основного текста */
+    --deep-red: #660000;   /* Темно-красный для опасных или тревожных акцентов */
+}
+
+/* 2. Настройка корневого шрифта (База для Золотого правила em) */
+html {
+    /* Плавный рост от 16px до 18px */
+    font-size: clamp(16px, 0.3vw + 14px, 18px);
+}
+
+/* 3. Жесткий сброс стилей браузера */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 4. Основные настройки тела страницы */
+body {
+    background-color: #000; 
+    color: var(--text-color);
+    font-family: 'Cormorant Garamond', serif; /* Основной книжный шрифт */
+    overflow: hidden; 
+    user-select: none; /* Запрет выделения текста для полного погружения */
+    opacity: 0; /* Стартовая невидимость для анимации появления */
+    animation: fadeInSite 2.5s ease-in-out forwards;
+    transition: background 2s ease, color 1.5s ease;
+    overscroll-behavior-y: none; /* Убирает эффект "резинки" при скролле на телефонах */
+}
+
+/* 5. Безшовная анимация появления сайта */
+@keyframes fadeInSite {
+    to { opacity: 1; }
+}
+
+
+/* ==========================================================================
+   II. СЕТКА И УПРАВЛЕНИЕ ЭКРАНАМИ
+   Логика переключения состояний и глобальная разметка страниц.
+   ========================================================================== */
+
+/* 1. Базовый скрытый экран */
+.screen {
+    display: none;
+    min-height: 100vh;
+    width: 100%;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0; 
+    left: 0;
+}
+
+/* 2. Активный экран (плавное проявление) */
+.screen.active {
+    display: flex;
+    opacity: 1;
+    z-index: 10;
+}
+
+/* 3. Экран чтения (Основной контент) */
+#screen-content {
+    flex-direction: row; /* Блоки выстраиваются в ряд (например, сайдбар + текст) */
+    align-items: stretch;
+    justify-content: flex-start;
+}
+
+/* 4. Экран обложки книги */
+#screen-cover {
+    background-color: transparent;
+    perspective: 2000px;
+}
+
+/* Контент внутри обложки (названия, авторы) */
+.cover-content {
+    z-index: 2;
+    text-align: center;
+}
+
+/* 5. 3D-Анимация перелистывания тяжелой обложки */
+#screen-cover.page-turning {
+    animation: heavyCoverTurn 1.5s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
+    transform-origin: left center; /* Точка сгиба переплета */
+}
+
+@keyframes heavyCoverTurn {
+    0% { 
+        transform: rotateY(0deg); 
+        opacity: 1; 
+    }
+    100% { 
+        transform: rotateY(-90deg); 
+        opacity: 0; 
+    }
+}
+
+/* ==========================================================================
+   III. ИНТЕРФЕЙС ЧТЕНИЯ (ОБЛОЖКА)
+   Визуальное сердце книги. Сетка, частицы и элементы управления.
+   ========================================================================== */
+
+/* === 1. ГЛАВНАЯ ОБЛОЖКА === */
+
+/* Главный 3D-заголовок книги */
+.title-3d {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 5vw, 5rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-shadow: 0px 10px 20px rgba(0,0,0,0.9), 0 0 15px rgba(197, 160, 89, 0.4);
+    line-height: 1.2;
+    
+    /* Центрирование и защита для смартфонов */
+    width: 100%;
+    max-width: 90vw; 
+    margin: 0 auto;
+}
+
+/* Зона клика для перелистывания обложки */
+.page-turn-trigger {
+    position: absolute;
+    top: 0; 
+    right: 0;
+    width: 50%; 
+    height: 100%;
+    z-index: 10;
+    cursor: pointer;
+}
+
+/* === 2. ЭФФЕКТЫ: ЗОЛОТЫЕ ЧАСТИЦЫ === */
+#particles-container {
+    position: absolute;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.gold-particle {
+    position: absolute;
+    background: var(--gold);
+    box-shadow: 0 0 10px var(--gold);
+    border-radius: 50%;
+    opacity: 0;
+    animation: floatUp linear forwards;
+}
+
+@keyframes floatUp {
+    0%   { opacity: 0; transform: translateY(0) scale(0.5); }
+    20%  { opacity: 0.8; transform: translateY(-20vh) scale(1.5); }
+    100% { opacity: 0; transform: translateY(-100vh) scale(0.5); }
+}
+
+
+/* 4. === САЙДБАР (Меню слева) === */
+.sidebar {
+    /* 370px / 18 (твоя база) = ~20.5rem */
+    width: 18rem; 
+    /* 320px / 18 = ~17.8rem  было 16 норм*/
+    min-width: 14rem;
+    flex-shrink: 0;
+    height: 100dvh;
+    /* Рамка остается в px для изящности */
+    border-right: 1px solid rgba(197, 160, 89, 0.2);
+    /* 50px 30px -> переводим в rem */
+    padding: 3rem 1.8rem; 
+    background: linear-gradient(90deg, #050505 0%, #0d0d0d 100%);
+    display: flex;
+    flex-direction: column;
+    z-index: 20;
+}
+
+.back-btn {
+    color: var(--gold-dim); 
+    font-size: 1.2rem; 
+    text-transform: uppercase;
+    /* em идеально подходит для межбуквенного интервала */
+    letter-spacing: 0.15em; 
+    cursor: pointer; 
+    /* 60px / 16 = 3.75rem */
+    margin-bottom: 3.75rem; 
+    transition: color 0.3s; 
+    display: flex; 
+    align-items: center; 
+    /* Расстояние от иконки до текста зависит от размера шрифта кнопки */
+    gap: 0.5em; 
+}
+
+.back-btn:hover { color: var(--gold); }
+
+.bookmarks {
+    /* 120px / 16 = 7.5rem. Вычитаем из высоты экрана гибкое значение */
+    max-height: calc(100vh - 7.5rem);
+    overflow-y: auto;
+    /* 10px / 16 = ~0.6rem */
+    padding-right: 0.6rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold-dim) transparent;
+}
+
+/* Настройки скроллбара оставляем в px, чтобы он всегда был тонким и аккуратным */
+.bookmarks::-webkit-scrollbar { width: 3px; }
+.bookmarks::-webkit-scrollbar-track { background: transparent; }
+.bookmarks::-webkit-scrollbar-thumb { 
+    background-color: var(--gold-dim); 
+    border-radius: 10px; 
+}
+
+/* 5. === КОНТЕЙНЕР КНИГИ И ЗОНЫ КЛИКА === */
+.book-viewport {
+    width: 100%;
+    max-width: 100%;
+    height: 100dvh;
+    position: relative;
+    display: block;
+    perspective: 2000px; 
+}
+
+.art-book-container { 
+    width: 100%; 
+    height: 100%; 
+    position: relative; 
+}
+
+.click-zone { position: absolute; top: 0; height: 100%; width: 20%; z-index: 15; cursor: pointer; }
+.zone-left { left: 0; }
+.zone-right { right: 0; }
+
+.page-counter {
+    position: absolute;
+    /* 25px перевели в rem, чтобы отступ дышал вместе с экраном */
+    bottom: 1.5rem; 
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.2rem;
+    color: var(--gold-dim);
+    /* 4px перевели в em от текущего шрифта */
+    letter-spacing: 0.2em; 
+    font-style: italic;
+    z-index: 10;
+    opacity: 0.8;
+}
+
+/* 6. === СТРАНИЦЫ И ТЕКСТ === */
+
+/* 1. БЕЗОПАСНАЯ БАЗА (ТРЕТИЙ ВАРИАНТ) — Для слабых устройств или длинных текстов */
+.page {
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    opacity: 0; 
+    pointer-events: none;
+    z-index: 1; 
+    contain: content; 
+    backface-visibility: hidden; 
+
+    /* Плоский старт для надежности */
+    transform-origin: left center; 
+    transform: scale(1) translateX(0); 
+    transition: transform 0.8s ease, opacity 0.8s ease, filter 0.8s ease;
+
+    /* Типографика и Масштабирование */
+    font-family: 'Lora', serif !important;
+    line-height: 1.6; 
+    font-size: 1.1rem;
+    color: #d1d1d1;
+    text-align: left;
+    hyphens: auto;
+    letter-spacing: 0.015em;
+    padding: clamp(1rem, 3vw, 1.8rem) clamp(1.5rem, 5vw, 5rem) clamp(1.2rem, 4vw, 2.5rem);
+
+    /* Скроллбар (Firefox) */
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin; 
+    scrollbar-color: var(--gold-dim) transparent; 
+
+    /* Сглаживание */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* СКРОЛЛБАР (Chrome, Safari, Edge) — Те самые потерянные правила */
+.page::-webkit-scrollbar-track { 
+    background: transparent; 
+}
+.page::-webkit-scrollbar-thumb { 
+    background-color: var(--gold-dim); 
+    border-radius: 10px; 
+}
+
+/* Состояния для плоского перелистывания */
+.page.active {
+    opacity: 1; 
+    transform: scale(1) translateX(0); 
+    pointer-events: auto; 
+    z-index: 5; 
+}
+
+.page.flipped { 
+    transform: scale(0.95) translateX(-20px); 
+    opacity: 0; 
+    z-index: 10; 
+}
+
+/* 2. ПОЛНОЦЕННОЕ 3D (Включается только если браузер на 100% готов) */
+@supports (perspective: 2000px) or (-webkit-perspective: 2000px) {
+    .page {
+        transform: perspective(2000px) rotateY(0deg); 
+        transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.8s ease;
+    }
+    .page.active {
+        transform: perspective(2000px) rotateY(0deg); 
+    }
+    .page.flipped { 
+        transform: perspective(2000px) rotateY(-90deg); 
+    }
+}
+
+/* Оформление абзацев */
+.page p {
+    margin-bottom: 0; 
+    text-indent: 2.5rem;
+    opacity: 1;
+    animation: none !important;
+    transform: translateZ(0);
+}
+
+/* Специально для курсива для Лоры*/
+.page em, .page i {
+    font-style: italic;
+    letter-spacing: 0.02em; 
+}
+
+/* 7. === КОНТЕЙНЕР ЗАГОЛОВКОВ === */
+.chapter-header {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 1.25em; 
+    padding-bottom: 1em;   
+    border-bottom: 1px solid rgba(197, 160, 89, 0.1); 
+}
+
+/* h1 — ГЛАВА  */
+.chapter-header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--gold);
+    font-size: 1.6em;
+    font-weight: 400;
+    letter-spacing: 0.15em; 
+    text-transform: uppercase;
+    margin-bottom: 0.15em;
+}
+
+/* h2 — ПОДГЛАВА  */
+.chapter-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--gold);
+    font-size: 1.3em;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.15em;
+    text-transform: uppercase;
+}
+
+/* h3 — БЛОК  */
+.chapter-header h3 {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.8em;
+    letter-spacing: 0.1em; 
+    color: var(--gold-dim);
+    opacity: 1;
+    margin-bottom: 0.5em;
+}
+
+/* h4 — ДАТА И ДЕНЬ  */
+.chapter-header h4 {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.7em;
+    letter-spacing: 0.1em; 
+    color: var(--gold-dim);
+    opacity: 2;
+    margin-bottom: 0;
+}
+
+/* === POV (ФОКУС ПЕРСОНАЖА) === */
+.pov-marker {
+    font-size: 1.2em;
+    font-style: italic;
+    color: var(--text-color); /* Или var(--gold-dim), если хочется выделить */
+}
+
+/* 8. === Утилиты, спецэфекты, СПЕЦИАЛЬНЫЕ СТИЛИ ТЕКСТА === */
+
+.blurred-vision {
+    /* Оставляем px для фильтра — это безопаснее для кроссбраузерности */
+    filter: blur(3.5px); 
+    opacity: 0.8;      
+    user-select: none; 
+    transition: filter 0.5s ease, opacity 0.5s ease;
+    display: inline-block;
+}
+
+.blurred-vision:hover {
+    filter: blur(2.8px);
+    opacity: 1;
+}
+
+p.no-indent {
+    text-indent: 0;
+    margin-top: 0;
+}
+
+/* Шмуцтитул (для крупных частей книги) */
+.part-title { 
+    font-family: 'Cormorant Garamond', serif;
+    /* rem здесь сработает идеально, отталкиваясь от нашего умного html */
+    font-size: 2.5rem; 
+    font-weight: 700;
+    color: var(--gold);
+    text-align: center;
+    text-transform: uppercase;
+    /* em для межбуквенного интервала, как договаривались */
+    letter-spacing: 0.1em; 
+    margin-bottom: 2rem;
+}
+
+/* Рукописная подпись или заметка на полях */
+.diary-signature { 
+    font-family: 'Great Vibes', cursive;
+    font-size: 1.6rem; 
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+    text-align: right; 
+}
+
+.vzdoh {
+    height: 1em;
+    display: block;
+}
+
+sup {
+    font-size: 0.5em; /* Читабельно, но мельче основного текста */
+    vertical-align: super; /* Приподнимает над строкой */
+    line-height: 0; /* Чтобы сноска не ломала межстрочный интервал абзаца */
+}
+
+/* Продолжение текста с прошлой страницы (без красной строки) */
+p.no-indent {
+    text-indent: 0;
+    margin-top: 0;
+}
+
+/* Универсальное описание фото/видео/аудио в соцсетях */
+.media-desc {
+    font-style: italic;
+    color: #888;
+}
+
+.highlight { 
+    color: var(--gold); 
+    font-style: italic; 
+}
+
+.trauma { 
+    color: var(--deep-red); 
+    font-weight: 600; 
+    text-shadow: 0 0 10px rgba(102, 0, 0, 0.3); 
+}
+
+/* ЗВОН В УШАХ */
+.tinnitus-glitch {
+    display: inline-block;
+    /* Анимация длится 3 секунды и повторяется безконечно */
+    animation: ear-ringing 3s infinite linear; 
+}
+
+/* Настраиваем сам приступ: резкая боль, вибрация и отпускает */
+@keyframes ear-ringing {
+    0%, 100% {
+        transform: skewX(0deg) translateX(0);
+        text-shadow: 0 0 0 transparent;
+        opacity: 1;
+        filter: blur(0);
+    }
+    /* Резкий скачок (свист бьёт по ушам) */
+    10%, 14%, 18% {
+        transform: skewX(-3deg) translateX(-1px);
+        /* Раздвоение текста: золотой и полупрозрачный белый */
+        text-shadow: 2px 0 rgba(184, 155, 94, 0.7), -2px 0 rgba(255, 255, 255, 0.3);
+        opacity: 0.8;
+        filter: blur(0.5px);
+    }
+    12%, 16%, 20% {
+        transform: skewX(3deg) translateX(1px);
+        text-shadow: -2px 0 rgba(184, 155, 94, 0.7), 2px 0 rgba(255, 255, 255, 0.3);
+        opacity: 0.9;
+        filter: blur(0);
+    }
+    /* После 20% анимации звук стихает, давая читателю передышку на пару секунд */
+    22% {
+        transform: skewX(0deg) translateX(0);
+        text-shadow: 0 0 0 transparent;
+        opacity: 1;
+    }
+}
+
+/* 9. === СНОСКИ И ПОДСКАЗКИ (Footnotes/Tooltips) === */
+
+.custom-note {
+    color: var(--gold);
+    cursor: help;
+    position: relative;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 0 0.2em;
+    font-family: sans-serif; /* Для лучшей читаемости символа сноски */
+}
+
+/* Всплывающее окно с текстом */
+.custom-note::after {
+    content: attr(data-tooltip); /* Берем текст из атрибута data-tooltip */
+    position: absolute;
+    bottom: 1.8em;               /* Позиция над текстом */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(13, 13, 13, 0.98); /* Почти черный фон */
+    color: var(--text-color);
+    padding: 0.5rem 0.7rem;      /* px -> rem для стабильности */
+    border: 1px solid var(--gold); /* Линия строго в px */
+    border-radius: 0.3em;
+    font-size: 1rem;             /* Адекватный читабельный размер (было 0.85em) */
+    line-height: 1.3;
+    text-indent: 0;
+    width: 15rem;                /* Ширина в rem, чтобы не зависела от родителя */
+    max-width: 80vw;             /* Защита для смартфонов: не шире экрана */
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 1000;
+    pointer-events: none;        /* Окно не мешает курсору */
+    
+    /* Возвращаем книжные стили внутри подсказки */
+    font-family: 'Cormorant Garamond', serif;
+    font-style: normal;
+    font-weight: normal;
+    text-align: left;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Появление при наведении или нажатии (focus) */
+.custom-note:hover::after,
+.custom-note:focus::after {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(-5px);
+}
+
+/* ==========================================================================
+   VI. СОЦИАЛЬНЫЕ СЕТИ И МЕДИА (ИНТЕРФЕЙСЫ)
+   ========================================================================== */
+
+/* === 1. ИНСТАГРАМ: ОПИСАНИЕ ФОТО === */
+.insta-photo-desc {
+    margin: 1.2em 0;          
+    padding: 0.75em 1em;      
+    border-left: 2px solid rgba(184, 155, 94, 0.2); /* Рамка строго в px */
+    background: rgba(255, 255, 255, 0.02); 
+}
+
+.insta-photo-desc .photo-info {
+    font-family: 'Lora', serif;
+    font-style: italic; 
+    font-size: 0.9em;         
+    color: #888; 
+    display: block; 
+    line-height: 1.5;
+    text-indent: 0; 
+    margin: 0;                
+}
+
+/* === 2. ИНСТАГРАМ: DIRECT И ГРУППЫ === */
+.chat-header {
+    text-align: center;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    margin-top: 0.85em;
+    margin-bottom: 0.85em;
+    display: block; 
+}
+
+.ig-participants {
+    font-size: 0.85em;
+    margin-top: 0.95em; 
+    margin-bottom: 1.5em; 
+    text-indent: 0; 
+    line-height: 1.4; 
+}
+
+.ig-participants span {
+    color: var(--gold);
+}
+
+.ig-direct, .ig-group {
+    font-family: sans-serif;
+    font-size: 0.85em;
+    line-height: 1.2;
+    margin-top: 0.85em;    
+    margin-bottom: 0.85em;
+}
+
+.ig-user {
+    font-weight: bold;
+    color: var(--gold);
+}
+
+.ig-time {
+    font-size: 0.85em; 
+    color: #888;
+    font-weight: bold;
+}
+
+.ig-status {
+    font-size: 0.85em;
+    color: #888; 
+    display: inline-block; 
+    margin-top: 0.2em; 
+}
+
+.ig-status em {
+    font-style: italic;
+}
+
+/* === 3. INSTAGRAM LIVE (ПРЯМОЙ ЭФИР) === */
+.live-header {
+    text-align: center;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    font-weight: bold;
+    /* !important железно защищает от влияния .page p */
+    margin: 1.2em 0 !important; 
+    text-indent: 0 !important; 
+}
+
+.live-dot {
+    vertical-align: middle;
+    font-size: 0.9em;
+    color: #ff0000; 
+    margin-right: 0.3em;
+}
+
+.live-interface {
+    margin-top: 0; 
+    font-family: sans-serif;
+    font-size: 0.85em;
+    line-height: 1.2;
+}
+
+.live-desc {
+    font-style: italic;
+    color: #888;
+    display: block; 
+    margin-bottom: 0.6em !important; 
+}
+
+.live-viewers {
+    text-align: right;
+    font-size: 0.9em; 
+    color: #888;
+    margin-top: 0.3em; 
+}
+
+.live-body {
+    border-left: 3px solid rgba(184, 155, 94, 0.4); 
+    padding-left: 0.9em;
+    margin: 1.2em 0;
+    font-style: italic;
+    color: #d1d1d1; 
+    font-size: 0.95em;
+    line-height: 1.4;
+}
+
+.live-action {
+    border-left: 3px solid rgba(184, 155, 94, 0.4); 
+    padding-left: 1em;
+    margin: 1.2em 0;
+    font-style: italic;
+    color: #8a8a8a;
+    font-size: 0.9em; 
+    line-height: 1.4;
+}
+
+.live-action p {
+    margin-top: 0;
+    margin-bottom: 0.5em;
+}
+
+.live-action p:last-child {
+    margin-bottom: 0;
+}
+
+.live-comments {
+    border-left: 3px solid rgba(184, 155, 94, 0.4); 
+    padding-left: 0.9em;
+}
+
+.live-comments-title {
+    font-size: 0.9em;
+    text-transform: uppercase;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    margin-top: 0 !important;
+    margin-bottom: 0.3em !important;
+    text-indent: 0 !important; 
+}
+
+/* === 4. INSTAGRAM STORIES === */
+.ig-stories {
+    font-family: sans-serif;
+    font-size: 0.85em; 
+    line-height: 1.4;
+    border-left: 2px solid var(--gold); 
+    padding-left: 0.95em; 
+    margin-bottom: 1.2em; 
+}
+
+.ig-story-title {
+    font-weight: bold;
+    color: var(--gold);
+    display: block; 
+    margin-top: 1em; 
+    margin-bottom: 0.3em;
+}
+
+.ig-stories .ig-story-title:first-child {
+    margin-top: 0;
+}
+
+.ig-story-desc {
+    font-style: italic;
+    color: #888;
+    display: block; 
+    margin-bottom: 0.3em;
+}
+
+.ig-story-stats {
+    font-family: sans-serif;
+    font-size: 0.85em;
+    line-height: 1.4;
+    color: #888;
+    margin-bottom: 1.25em; 
+}
+
+.ig-reactions {
+    font-family: sans-serif;
+    font-size: 0.85em;
+    line-height: 1.2;
+}
+
+/* === 5. СИСТЕМНЫЕ УВЕДОМЛЕНИЯ И SMS === */
+.ig-notification, .sms-message {
+    background: rgba(184, 155, 94, 0.1);
+    border-left: 3px solid var(--gold); 
+    padding: 0.7em 1em;
+    margin: 1.2em 0;
+    font-family: sans-serif;
+    font-size: 0.85em; 
+    border-radius: 0 0.25em 0.25em 0;
+    line-height: 1.4;
+}
+
+.ig-notif-title {
+    font-weight: bold;
+    color: var(--gold);
+    letter-spacing: 0.05em; 
+    text-transform: uppercase;
+    display: block; 
+    margin-bottom: 0.2em; 
+}
+
+.ig-notif-info {
+    font-size: 0.85em;
+    color: #888;
+    display: block; 
+    margin-bottom: 0.3em; 
+}
+
+.sms-message .sms-sender {
+    font-weight: bold;
+    color: var(--gold-dim); 
+}
+
+/* === 6. TELEGRAM (Канал White/Black) === */
+.tg-post {
+    margin: 1.5em auto;      
+    background: #fafafa;
+    padding: 1.25em;         
+    border-radius: 0.75em;   
+    border: 1px solid #eaeaea; 
+    box-shadow: 0 0.1em 0.5em rgba(0,0,0,0.05); /* Тень в em */
+    font-family: sans-serif;
+    color: #000;
+}
+
+.tg-channel-title {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 0.95em;   
+    color: #111;
+}
+
+.tg-media-desc {
+    color: #111;
+    font-size: 0.9em;
+    margin-bottom: 0.5em;    
+    line-height: 1.4;
+    text-indent: 0 !important; /* Безпощадно убираем красную строку */
+}
+
+.tg-caption {
+    font-size: 0.95em;
+    line-height: 1.5;
+    color: #000;
+    margin-top: 0.95em;
+    text-indent: 0 !important; /* Безпощадно убираем красную строку */
+}
+
+.tg-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.25em;
+    font-size: 0.85em;
+    color: #666;
+}
+
+.tg-divider {
+    border: 0;
+    border-top: 1px solid #ddd;
+    margin: 0.95em 0;
+}
+
+.tg-comments-count {
+    font-size: 0.85em;
+    color: #888;
+    margin-bottom: 0.95em;
+    text-indent: 0 !important; /* Безпощадно убираем красную строку */
+}
+
+.tg-comment {
+    margin-bottom: 0.75em;   
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+.tg-reply {
+    margin-bottom: 0.75em;
+    font-size: 0.85em;       
+    margin-left: 1.5em;      
+    border-left: 2px solid #ccc; 
+    padding-left: 0.6em;     
+    line-height: 1.4;
+}
+
+.tg-user {
+    font-weight: bold;
+    color: #222;
+}
+
+/* ИНТЕРАКТИВНАЯ СТОРИС (ОПРОС/ВОПРОС) */
+.ig-story-poll {
+    background: rgba(184, 155, 94, 0.05);
+    border: 1px solid rgba(184, 155, 94, 0.2);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin: 1.25rem auto;
+    max-width: 85%;
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 0.95em;
+}
+
+.ig-story-label {
+    display: block;
+    font-size: 0.85em;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.ig-story-poll p {
+    margin-bottom: 1rem;
+    line-height: 1.4;
+    text-indent: 0 !important; /* Убираем красную строку, если она есть в базовых стилях */
+}
+
+.ig-story-poll p:first-of-type {
+    font-style: italic;
+    color: var(--text-color);
+}
+
+.ig-story-button {
+    display: inline-block;
+    background: rgba(184, 155, 94, 0.2);
+    padding: 0.5rem 1.25rem;
+    border-radius: 1.25rem;
+    color: var(--gold);
+    font-weight: bold;
+    letter-spacing: 0.3em;
+    margin-top: 0.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* === 7. МУЗЫКАЛЬНЫЙ ПЛЕЕР (Music Box) === */
+.music-box {
+    cursor: pointer;
+    background: rgba(184, 155, 94, 0.05);
+    font-size: 0.85em; 
+    padding: 1em 0.8em; 
+    margin-top: 0.8em;   
+    margin-bottom: 0.8em; 
+    border-radius: 0.15em;
+    border: 1px solid rgba(184, 155, 94, 0.2);
+    display: block;
+}
+
+.music-box summary {
+    font-weight: bold;
+    color: var(--gold);
+    list-style: none;
+    outline: none;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.music-box summary span {
+    letter-spacing: 0.05em;
+}
+
+.music-box summary::-webkit-details-marker {
+    display: none;
+}
+
+.music-content {
+    margin-top: 0.8em;
+    padding-top: 0.8em;
+    border-top: 1px solid rgba(184, 155, 94, 0.1);
+}
+
+.music-source-label {
+    font-size: 0.8em; 
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 0.4em;
+    opacity: 0.8;
+}
+
+.music-box iframe {
+    margin-bottom: 0.8em;
+    display: block;
+    max-width: 100%; /* Защита: плеер никогда не вылезет за края карточки */
+}
+
+.music-box *:last-child {
+    margin-bottom: 0;
+}
+
+/* === 8. РЕЗУЛЬТАТЫ ИГРЫ И СПИСКИ === */
+.game-results {
+    margin-top: 1.25em;    
+    margin-bottom: 1.25em; 
+    padding: 0.95em;       
+    border-left: 3px solid var(--gold);
+    background: rgba(184, 155, 94, 0.05);
+}
+
+.game-results .game-title {
+    margin-top: 0;
+    margin-bottom: 0.5em; 
+    font-weight: bold;
+    color: var(--gold);
+}
+
+.game-results ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.game-results li {
+    margin-bottom: 0.3em;
+    line-height: 1.4;
+}
+
+/* === СТИХОТВОРНЫЙ БЛОК (ЭСТЕТИКА КРИСТИАНА) === */
+.story-poem {
+    font-family: 'Lora', serif; /* Твой основной шрифт для мемуаров */
+    font-style: italic;
+    color: var(--gold); /* Твое благородное золото из переменных */
+    border-left: 2px solid var(--gold); /* Тот самый боковой бортик */
+    padding: 1em 1.2em;
+    margin: 1.5em auto;
+    background: rgba(184, 155, 94, 0.03); /* Твой фирменный полупрозрачный фон */
+    line-height: 1.6;
+    max-width: 85%;
+    text-indent: 0 !important; /* Убираем красную строку */
+}
+
+.story-poem p {
+    margin: 0 0 0.5em 0;
+    text-indent: 0 !important;
+}
+
+.story-poem p:last-child {
+    margin-bottom: 0;
+}
+
+.poem-break {
+    display: block;
+    margin-bottom: 1em; /* Расстояние между строфами */
+}
+
+/* === ЭПИГРАФЫ И ЦИТАТЫ В НАЧАЛЕ ГЛАВ === */
+.epigraph {
+    border-left: 2px solid var(--gold);
+    padding-left: 1rem;
+    margin: 1.5rem 0 2rem 0;
+    font-size: 0.95em;
+    font-style: italic;
+    color: #cccccc; /* Чуть приглушеннее основного текста */
+}
+
+.epigraph p {
+    margin-bottom: 0;
+    text-indent: 0 !important; /* Убираем красную строку для цитаты */
+}
+
+.epigraph cite {
+    display: block;
+    text-align: right;
+    margin-top: 0.5rem;
+    color: var(--gold-dim);
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: 0.05em;
+}
+
+/* === КАРТОЧКА КОММЕНТАРИЯ (ALBA STYLE) === */
+.comment-box {
+    background: linear-gradient(135deg, #fdfaf5 0%, #f4ebd8 100%);
+    border: 2px solid #b89b5e;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 15px 30px rgba(184, 155, 94, 0.2);
+    margin: 2rem 0;
+    font-family: 'Times New Roman', serif;
+    color: #2c2c2c;
+}
+
+.comment-box-header {
+    text-align: center;
+    border-bottom: 1px solid rgba(184, 155, 94, 0.5);
+    padding-bottom: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.comment-box-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #b89b5e;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+}
+
+.comment-box-body {
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+.comment-box-body p {
+    font-style: italic;
+    margin-bottom: 0;
+    text-indent: 1.5 em;
+}
+
+/* Фирменный выпендрёж Альбы */
+.alba-prime {
+    color: var(--gold);
+    font-weight: bold;
+    font-size: 1.5em;
+    line-height: 1; /* Чтобы не сильно раздувало строку */
+}
+
+/* Адаптация музыкального плеера внутри светлой карточки */
+.comment-box .music-box {
+    background: rgba(184, 155, 94, 0.1);
+    border: 1px solid rgba(184, 155, 94, 0.3);
+}
+
+/* ==============================Финальный разделитель====================== */
+hr.final-divider {
+    border: 0;
+    border-top: 2px solid #b89b5e; /* Цвет var(--gold) */
+    margin: 30px 0;
+}
+
+/* Страница смены декораций */
+.takeover-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Центрируем по вертикали */
+    align-items: center;     /* Центрируем по горизонтали */
+    height: 75vh;            /* Занимаем почти весь экран, чтобы не липло к верху */
+    text-align: center;
+    font-family: inherit;
+}
+
+/* Перечёркнутая Джессика: Золотая, 1.5em */
+.jessica-old-title {
+    font-size: 1.5em;
+    color: var(--gold);
+    text-decoration: line-through;
+    text-decoration-color: var(--trauma-color, #5f0000); /* Линия цвета Травмы */
+    margin-bottom: 15px;
+    letter-spacing: 0.05em;
+    opacity: 0.9; /* Чтобы золото выглядело чуть бледнее */
+}
+
+/* Новая Альба: Травма, 3em, в один ряд */
+.alba-new-title {
+    font-size: 3em;          /* В один ряд */
+    font-weight: bold;
+    color: var(--trauma-color, #530404); /* Цвет Травмы */
+    text-decoration: underline;
+    text-underline-offset: 12px; /* Эстетичный отступ подчёркивания */
+    text-transform: uppercase;   /* Капслок для пафоса */
+    letter-spacing: 0.1em;
+    white-space: nowrap;       /* Гарантия, что влезет в один ряд */
+}
+
+/* ==========================================================================
+   V. ВНУТРЕННОСТИ САЙДБАРА (РАБОТАЕТ И НА ПК, И НА МОБИЛКАХ)
+   ========================================================================== */
+
+/* Общая эстетика сайдбара */
+.elegant-sidebar {
+    font-family: 'Cormorant Garamond', serif;
+    padding: 1.25rem; /* 20px -> rem */
+}
+
+/* Верхние кнопки */
+.sidebar-top-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; 
+}
+
+.nav-link {
+    cursor: pointer;
+    transition: color 0.4s ease, transform 0.4s ease;
+    display: flex;
+    align-items: center;
+    color: var(--text-color);
+}
+
+.nav-link:hover { color: var(--gold); }
+
+.main-link {
+    font-size: 1.5rem; 
+    font-weight: 600;
+}
+
+.main-link .bullet-point {
+    font-size: 0.6em;
+    margin-right: 0.75em; /* 12px -> em (зависит от шрифта) */
+}
+
+.sub-link {
+    font-size: 1.1rem; 
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+.sub-link .arrow { margin-right: 0.6em; }
+
+/* Элегантные разделители */
+.nav-divider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08); 
+    margin: 0.9rem 0; /* 25px -> rem */
+}
+
+/* Кнопка галереи */
+.old-money-btn {
+    font-size: 1.3rem;
+    font-style: italic; 
+    letter-spacing: 0.05em; /* 1px -> em */
+    text-align: left;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.old-money-btn:hover {
+    color: var(--gold);
+    text-shadow: 0 0 15px rgba(197, 160, 89, 0.2); 
+}
+
+
+/* === ВЕРХНЯЯ ПАНЕЛЬ САЙДБАРА (ДВА КВАДРАТА) === */
+.sidebar-top-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    margin-bottom: 0;
+    padding-bottom: 1.5rem;
+}
+
+/* Колонки навигации и тем */
+.sidebar-nav-col, .sidebar-theme-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1; /* Обе колонки занимают ровно по 50% */
+    gap: 0.8rem; /* 15px -> rem */
+}
+
+.sidebar-nav-col { align-items: flex-start; }
+.sidebar-theme-col { align-items: flex-end; text-align: right; }
+
+/* Вертикальная линия-разделитель */
+.sidebar-divider {
+    width: 1px; /* Толщина в px для изящности */
+    background: linear-gradient(to bottom, transparent, var(--gold-dim), transparent);
+    margin: 0 0.8rem;
+    opacity: 0.5;
+}
+
+/* === КНОПКИ ВЕРХНЕГО УРОВНЯ === */
+.back-btn {
+    cursor: pointer;
+    color: var(--accent-life); /* Пыльно-розовый */
+    font-size: 0.9rem;
+    letter-spacing: 0.15em; /* 2px -> em */
+    padding: 0.7rem 0; /* 12px -> rem */
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    transition: all 0.4s ease;
+}
+
+.back-btn:hover {
+    color: #fff;
+    text-shadow: 0 0 10px #fff;
+    padding-left: 0.3rem; /* 5px -> rem (эффект сдвига при наведении) */
+}
+
+.gallery-btn {
+    cursor: pointer;
+    margin: 0 0 0.3rem 0; 
+    padding: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.02);
+    text-align: center;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em; /* 3px -> em */
+    color: #fff;
+    transition: all 0.5s ease;
+}
+
+.gallery-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+/* === СТИЛИ ПЕРЕКЛЮЧАТЕЛЯ ТЕМ (Пациент / Доктор) === */
+.theme-label-small {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    color: var(--text-color);
+    opacity: 0.3;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+}
+
+.theme-option {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--text-color);
+    opacity: 0.3;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    transition: all 0.4s ease;
+}
+
+.theme-option:hover { opacity: 0.7; }
+
+.theme-option.active#theme-patient {
+    color: var(--gold);
+    opacity: 1;
+    text-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
+}
+
+.theme-option.active#theme-doctor {
+    color: #ffffff;
+    opacity: 1;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+/*  (ВСЕ ПРАВА ЗАЩИЩЕНЫ)    */
+
+.sidebar-footer {
+    /* Эта строчка выталкивает футер в самый низ сайдбара */
+    margin-top: auto; 
+    padding: 1.25rem 0.625rem;
+    text-align: center;
+}
+
+.copyright-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    color: var(--gold-dim);
+    opacity: 0.4;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.6;
+    pointer-events: none; /* Чтобы текст не мешал свайпам */
+}
+
+/* === СТУПЕНЧАТЫЙ АККОРДЕОН === */
+.staircase-accordion {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.staircase-accordion .accordion-item { margin-bottom: 0.5rem; }
+
+.staircase-accordion .accordion-header {
+    font-size: 1.3rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    padding: 0.4rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.staircase-accordion .accordion-header:hover { color: var(--gold); }
+
+/* Лесенка вложенности (шаг в 1rem) */
+.staircase-accordion .submenu-list {
+    list-style: none;
+    padding-left: 1rem; 
+    overflow: hidden;
+    max-height: 0; 
+    opacity: 0; 
+    visibility: hidden;
+    transition: max-height 0.6s ease, opacity 0.5s ease, visibility 0.5s;
+    will-change: max-height, opacity;
+}
+
+.staircase-accordion .submenu-list .submenu-list { padding-left: 1.5rem; }
+.staircase-accordion .submenu-list .submenu-list .submenu-list { padding-left: 2rem; }
+
+/* Состояние ОТКРЫТОГО аккордеона */
+.staircase-accordion .accordion-item.active > .submenu-list {
+    max-height: 2000px; 
+    opacity: 1;
+    visibility: visible;
+    margin-top: 0.3rem;
+}
+
+/* Плюсик */
+.accordion-icon {
+    display: inline-block;
+    transition: transform 0.4s ease;
+    font-weight: 300;
+}
+
+.staircase-accordion .accordion-item.active > .accordion-header .accordion-icon {
+    transform: rotate(45deg); 
+    color: var(--gold); 
+}
+
+/* Ссылки внутри аккордеона */
+.staircase-accordion .submenu-list li:not(.accordion-item) {
+    font-size: 1.1rem; 
+    padding: 0.3rem 0;
+    opacity: 0.85;
+    transition: color 0.3s ease, transform 0.3s ease; 
+    cursor: pointer;
+    list-style: none; 
+}
+
+.staircase-accordion .submenu-list li:not(.accordion-item):hover {
+    color: var(--gold);
+    opacity: 1;
+    transform: translateX(0.4rem); /* Эффект выдвижения */
+}
+
+
+/* === ИНТЕРАКТИВНАЯ ПОДСКАЗКА F11 === */
+.f11-hint {
+    position: fixed;
+    top: 1.8rem;
+    right: 1.8rem;
+    z-index: 1000;
+    
+    font-family: 'Courier New', monospace;
+    font-size: 0.65rem;
+    line-height: 1.6;
+    text-align: right;
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.3);
+    
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.5s ease;
+}
+
+.f11-hint:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Сама кнопка-клавиша */
+.f11-key {
+    display: inline-block;
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Рамка в px для четкости */
+    padding: 0.15em 0.6em;
+    margin: 0 0.3em;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+}
+
+.f11-hint:hover .f11-key {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+    border-color: #fff;
+}
+
+
+
+/* =======================================================================================================================================================
+   VI. МОБИЛЬНАЯ АДАПТАЦИЯ (СТРОГО ДО 1024px)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    /* 1. Адаптация текста и отступов */
+    .page {
+        /* Аккуратные 1.2мобильные отступы: 1.5rem верх, 1.2rem бока, 3.5rem низ */
+        padding: 1.5rem 3.3rem 3.5rem !important; 
+        font-size: 1.25rem !important; /* Увеличиваем только сам текст для удобства чтения */
+        text-align: left !important;
+        /* 2. Отключаем 3D и готовим к плоским свайпам */
+        position: absolute !important; 
+        top: 0;
+        left: 0;
+        width: 100%;
+        visibility: hidden; 
+        opacity: 0; 
+        pointer-events: none;
+        transition: none !important;
+    }
+    
+    .page p {
+        /* Красная строка для узкого экрана */
+        text-indent: 1.5rem !important; 
+    }
+
+    .page.active {
+        visibility: visible; 
+        opacity: 1; 
+        pointer-events: auto;
+        /* Оставляем relative, если этого требует твой JS для скролла, 
+           но обычно страницы держат absolute, чтобы не ломать высоту контейнера */
+        position: relative !important; 
+    }
+
+    /* 3. Блокируем 3D-излом для старого класса, чтобы он не конфликтовал со свайпом */
+    .page.flipped {
+        transform: none !important;
+    }
+}
+
+/* === Включаем мобильный режим (Управление только свайпом) === */
+@media (max-width: 1024px) {
+    .sidebar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        max-width: 85%; 
+        z-index: 900;
+        transform: translateX(-100%); 
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        background-color: var(--bg-color); 
+        box-shadow: 10px 0 30px rgba(0,0,0,0.8); 
+        padding-top: 1.25rem;
+    }
+    
+    .sidebar.mobile-open { 
+        transform: translateX(0); 
+    }
+
+    /* Элегантный золотой язычок для свайпа (выступает за край экрана) */
+    .sidebar::after {
+        content: '';
+        position: absolute;
+        left: 100%; /* Выносим наружу, чтобы зацепиться пальцем */
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0.6rem;
+        height: 6rem;
+        background-color: var(--gold-dim);
+        border-radius: 0 0.2rem 0.2rem 0; /* Скругляем только внешние края */
+        opacity: 0.4;
+        cursor: pointer;
+    }
+    
+    .book-viewport { 
+        width: 100%; 
+        flex: 1; 
+    }
+    
+    .zone-left, .zone-right { 
+        top: 4rem; 
+        height: calc(100% - 4rem); 
+        width: 6% !important; 
+        z-index: 10; 
+    }
+
+    iframe {
+        position: relative;
+        z-index: 100 !important; 
+        pointer-events: auto; 
+    }
+}
+
+/* ==========================================================================
+   СВАЙПЫ на смартфонах
+   ========================================================================== */
+
+/* === АНИМАЦИИ СВАЙПОВ (Для тач-интерфейса) === */
+.exit-left { animation: slideOutLeft 0.6s ease-in-out forwards; }
+.enter-right { animation: slideInRight 0.6s ease-in-out forwards; }
+.exit-right { animation: slideOutRight 0.6s ease-in-out forwards; }
+.enter-left { animation: slideInLeft 0.6s ease-in-out forwards; }
+
+@keyframes slideOutLeft {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(-100%); opacity: 0; }
+}
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+@keyframes slideInLeft {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* === ПОДСТРАХОВКА: МЯГКИЙ УХОД ДЛЯ ДЛИННЫХ СТРАНИЦ === */
+.page.flat-turn {
+    /* Меняем стандартную 3D-анимацию на плавное растворение */
+    transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out !important;
+}
+
+/* Перехватываем момент перелистывания от JS */
+.page.flat-turn.flipped {
+    /* Вместо rotateY делаем легкое оседание вниз и растворение в пустоте */
+    transform: scale(0.98) translateY(-10px) !important; 
+    opacity: 0 !important;
+}
+
+
+/* ==========================================================================
+   X. ОФОРМЛЕНИЕ ЗАГОЛОВКОВ РАЗДЕЛОВ
+   ========================================================================== */
+
+.section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    color: #af8632;
+    text-align: center;
+    padding: 1.25rem 0;  /* 20px -> rem */
+    margin: 15vh auto 3rem; /* Или 12vh, как тебе больше нравится визуально */
+
+    /* ГЛАВНЫЕ ПРАВИЛА ДЛЯ ПЛАВНОСТИ: */
+    white-space: nowrap;         /* Запрещаем перенос на вторую строку */
+    display: block;
+    width: fit-content;          /* Ширина по тексту */
+    max-width: 90%;              /* Буквы могут "дышать" */
+    
+    /* Тонкие линии сверху и снизу (оставляем px для изящества) */
+    border-top: 1px solid rgba(210, 170, 49, 0.1);
+    border-bottom: 1px solid rgba(210, 187, 42, 0.1);
+    
+    /* Свечение */
+    text-shadow: 0 0 12px rgba(175, 134, 50, 0.4);
+    
+    /* Анимация */
+    animation: titleAppear 3s ease-out forwards;
+}
+
+/* Анимация переведена в em, чтобы отступы росли вместе со шрифтом */
+@keyframes titleAppear {
+    from { 
+        opacity: 0; 
+        letter-spacing: 1.5em;  /* Эффект широкого разброса (было 25px) */
+        filter: blur(8px);      /* Туман */
+        transform: scale(0.95); /* Выплывает из глубины */
+    }
+    to { 
+        opacity: 1; 
+        letter-spacing: 0.75em; /* Финальный строгий интервал (было 12px) */
+        filter: blur(0); 
+        transform: scale(1);
+    }
+}
+
+/* ==========================================================================
+   XI. ГАЛЕРЕЯ И КАРТОЧКИ ПЕРСОНАЖЕЙ
+   ========================================================================== */
+
+/* === КАРТОЧКИ ФОТО (Используются внутри сетки галереи) === */
+.section-cover-container {
+    flex: 1;                 
+    max-width: 18.75rem;      /* 300px -> rem */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 0.6rem;          /* 10px -> rem */
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    background-color: rgba(0,0,0,0.2);
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.section-cover-container:hover {
+    transform: translateY(-5px);
+}
+
+.section-cover-art {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 2px;
+    
+    /* ЭСТЕТИКА БЕЗУМИЯ: Фильтры */
+    filter: sepia(20%) grayscale(30%) contrast(110%) brightness(90%);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1),
+                inset 0 0 50px rgba(0,0,0,0.5); 
+    transition: all 0.7s ease; 
+}
+
+.section-cover-container:hover .section-cover-art {
+    filter: sepia(0%) grayscale(0%) contrast(100%) brightness(100%);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.25);
+}
+
+.cover-caption {
+    margin-top: 1rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: var(--accent-life);
+    letter-spacing: 0.15em;   /* 2px -> em */
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+/* === ИНТЕРФЕЙС ГАЛЕРЕИ === */
+.gallery-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-y: auto;
+    
+    /* Магия плавности */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease, visibility 1s ease;
+    
+    /* Эстетичный скролл */
+    scrollbar-width: thin; 
+    scrollbar-color: var(--gold-dim) transparent;
+}
+
+.gallery-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Скроллбары WebKit */
+.gallery-overlay::-webkit-scrollbar { width: 4px; }
+.gallery-overlay::-webkit-scrollbar-track { background: transparent; }
+.gallery-overlay::-webkit-scrollbar-thumb {
+    background-color: var(--gold-dim); 
+    border-radius: 10px; 
+}
+
+.gallery-content {
+    max-width: 75rem;
+    margin: 0 auto;
+    padding-top: 2.5rem; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Сетка: 4 фото в ряд */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2.5rem 1.8rem;
+    width: 100%;
+    margin-top: 0; 
+}
+
+/* СПЕЦИАЛЬНЫЙ ЗАГОЛОВОК ДЛЯ ГАЛЕРЕИ (добавь этот класс в HTML к слову "Фотоальбом") */
+.gallery-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    color: #af8632;
+    letter-spacing: 0.15em;
+    
+    /* СЕКРЕТ СИММЕТРИИ: Обнуляем верх, задаем точный низ */
+    margin-top: 0;
+    margin-bottom: 2.5rem; /* Точно такой же отступ, как от потолка! */
+    
+    text-shadow: 0 0 10px rgba(175, 134, 50, 0.3);
+}
+
+/* Кнопка закрытия */
+.gallery-close-text {
+    margin-top: 3.75rem;      /* 60px -> rem */
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    color: var(--accent-life);
+    letter-spacing: 0.3em;    /* 5px -> em */
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1rem 2.5rem;     /* 15px 40px -> rem */
+    transition: all 0.5s ease;
+    text-align: center;
+    position: relative;
+    z-index: 9999999 !important; 
+    pointer-events: auto !important; 
+}
+
+.gallery-close-text:hover {
+    color: #fff;
+    border-color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+/* ИСКУССТВЕННОЕ ДНО */
+.gallery-content::after {
+    content: '';
+    display: block;
+    height: 5rem;             /* 80px -> rem */
+    width: 100%;
+    flex-shrink: 0; 
+}
+
+/* Наш золотой стандарт: 1024px для планшетов и телефонов */
+@media (max-width: 1024px) {
+    .gallery-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 1.5rem; /* Немного уменьшаем зазоры для узких экранов */
+    }
+}
+
+/* Плавное затухание сайта */
+.fade-out-site { animation: fadeOutSite 1.2s ease-in-out forwards !important; }
+
+@keyframes fadeOutSite {
+    0% { opacity: 1; }
+    100% { opacity: 0; background-color: #000; }
+}
+
+
+/*==================================================================ТЕМЫ========================****/
+
+
+/* =========================================================
+   === 1. ТЕМА ПАЦИЕНТА: ЗОЛОТО И ТРАВМА (И ЕЁ ВАРИАЦИИ) ===
+   ========================================================= */
+
+/* 1. Глобальные фоны Пациента для карусели */
+
+/* Ворон */
+body.theme-patient {
+    background-color: var(--bg-color); /* Та самая тьма, что делает фон чёрным */
+    background-image: url("../img/icons/stardust.png"); /* Теперь файл берется из твоей папки */
+    background-repeat: repeat; /* Чтобы пыль равномерно покрывала весь экран */
+}
+
+/* Чёрный*/
+body.theme-patient-mist {
+    background-color: #141414;
+    filter: contrast(1.05); /* Легкий акцент на текст в тумане */
+}
+
+/* 2. САЙДБАР: Глубокий черный (Работает для всех тем пациента) */
+body[class*="theme-patient"] .sidebar {
+    background: linear-gradient(90deg, #050505 0%, #0d0d0d 100%);
+    border-right: 1px solid rgba(197, 160, 89, 0.2);
+    box-shadow: 0.6rem 0 2rem rgba(0, 0, 0, 0.5);
+}
+
+/* 3. Текст в сайдбаре Пациента — Золото */
+body[class*="theme-patient"] .sidebar .nav-link,
+body[class*="theme-patient"] .sidebar .accordion-header,
+body[class*="theme-patient"] .sidebar .submenu-list li,
+body[class*="theme-patient"] .sidebar .gallery-btn,
+body[class*="theme-patient"] .sidebar .theme-label-small {
+    color: var(--gold);
+}
+
+/* 4. Психиатр в режиме пациента — БЕЛЫЙ шрифт */
+body[class*="theme-patient"] #theme-doctor {
+    color: #ffffff;
+    opacity: 0.9;
+}
+
+/* 5. ХОВЕР: КРАСНАЯ ТРАВМА */
+body[class*="theme-patient"] .sidebar .nav-link:hover,
+body[class*="theme-patient"] .sidebar .accordion-header:hover,
+body[class*="theme-patient"] .sidebar .submenu-list li:hover,
+body[class*="theme-patient"] .sidebar .gallery-btn:hover,
+body[class*="theme-patient"] #theme-patient:hover {
+    color: var(--deep-red);
+    text-shadow: 0 0 10px rgba(102, 0, 0, 0.8);
+    background: transparent;
+}
+
+/* 6. ХОВЕР: На Психиатра — БЕЛОЕ свечение */
+body[class*="theme-patient"] #theme-doctor:hover {
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
+/* =========================================================
+   === 2. ТЕМА ПСИХИАТРА: МЕДИЦИНСКОЕ СИЯНИЕ (И ЕГО ВАРИАЦИИ) ===
+   ========================================================= */
+
+/* 1. Глобальный фон: Грязный медицинский (Базовый) */
+body.theme-doctor {
+    background-color: #d6d0b8 !important;
+    background-image: none !important;
+}
+
+/* Дополнительный фон Психиатра: Пятна Роршаха */
+body.theme-doctor-ink {
+    background-color: #d6d0b8 !important; 
+    background-image: url('../img/icons/rorcharch.webp') !important; 
+    background-position: 80% 0 !important;
+    background-repeat: no-repeat !important;
+    background-attachment: scroll !important;
+
+    /* ВАЖНО: Отключаем анимацию именно для ПЕРЕМЕЩЕНИЯ фона, 
+       чтобы пятно не "плыло" из центра, а появлялось сразу там, где нужно */
+    transition: background-position 0.4s !important; 
+}
+
+/* 1. БАЗОВЫЙ СТИЛЬ (Для телефонов и планшетов) 
+      Здесь мы убираем тяжелую математику, чтобы A32 не тормозил. */
+body.theme-doctor-ink .page {
+    /* Отключаем тяжелые режимы наложения и фильтры */
+    mix-blend-mode: normal !important;
+    filter: none !important;
+
+    /* Оставляем "легкую" эстетику: чуть приглушенный черный */
+    color: rgba(0, 0, 0, 0.85) !important;
+
+    /* Тень оставляем — она почти не ест ресурсы, но дает объем букв */
+    text-shadow: 0.3px 0.3px 0px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 2. МАГИЯ ДЛЯ МОЩНЫХ УСТРОЙСТВ (Desktop / Широкие экраны)
+      Включается только если ширина экрана больше 1024px. */
+@media (min-width: 1025px) {
+    body.theme-doctor-ink .page {
+        /* Возвращаем впечатывание в бумагу */
+        mix-blend-mode: multiply !important;
+        
+        /* Возвращаем мягкость и контраст типографской краски */
+        filter: blur(0.25px) contrast(1.1) !important;
+        
+        /* Возвращаем исходную плотность цвета */
+        color: rgba(0, 0, 0, 0.9) !important;
+        
+        /* Усиливаем тень для глубины на больших мониторах */
+        text-shadow: 0.3px 0.3px 0px rgba(0, 0, 0, 0.2) !important;
+    }
+}
+
+/* 2. Текст книги: Строго черный LORA (ПРИМЕНЯЕТСЯ КО ВСЕМ ТЕМАМ ПСИХИАТРА) */
+body.theme-doctor .page,
+body.theme-doctor .page *,
+body.theme-doctor-ink .page,
+body.theme-doctor-ink .page *,
+body.theme-doctor-archive .page,
+body.theme-doctor-archive .page * {
+    font-family: 'Lora', serif !important;
+    color: #000000 !important;
+    text-shadow: none !important;
+}
+
+/* 3. САЙДБАР: Матовый серый корпус */
+body.theme-doctor .sidebar.elegant-sidebar,
+body.theme-doctor-ink .sidebar.elegant-sidebar,
+body.theme-doctor-archive .sidebar.elegant-sidebar {
+    background: #ceccbc !important;
+    border-right: 2px solid rgba(0, 0, 0, 0.3) !important;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 4. ТЕКСТ В САЙДБАРЕ: Исходное состояние (Черный) */
+body[class*="theme-doctor"] .sidebar.elegant-sidebar,
+body[class*="theme-doctor"] .sidebar.elegant-sidebar *,
+body[class*="theme-doctor"] #theme-patient,
+body[class*="theme-doctor"] #theme-doctor,
+body[class*="theme-doctor"] .nav-link,
+body[class*="theme-doctor"] .accordion-header,
+body[class*="theme-doctor"] .submenu-list li {
+    color: #000000 !important;
+    text-shadow: none !important;
+    opacity: 1 !important;
+}
+
+/* 5. ХОВЕР (НАВЕДЕНИЕ): РАЙСКОЕ МЕДИЦИНСКОЕ СВЕЧЕНИЕ (БЕЛОЕ) */
+body[class*="theme-doctor"] .sidebar.elegant-sidebar .nav-link:hover,
+body[class*="theme-doctor"] .sidebar.elegant-sidebar .theme-option:hover,
+body[class*="theme-doctor"] .sidebar.elegant-sidebar .gallery-btn:hover,
+body[class*="theme-doctor"] .sidebar.elegant-sidebar .accordion-header:hover,
+body[class*="theme-doctor"] .sidebar.elegant-sidebar .submenu-list li:hover {
+    color: #000000 !important; 
+    text-shadow: 0 0 15px #ffffff, 0 0 25px #ffffff !important;
+    background: rgba(255, 255, 255, 0.2) !important; 
+}
+
+/* 6. АКТИВНЫЕ И СПЕЦИАЛЬНЫЕ ЭЛЕМЕНТЫ */
+body[class*="theme-doctor"] #theme-doctor.active {
+    color: #000000 !important;
+    font-weight: bold !important;
+    text-shadow: 0 0 10px #ffffff !important;
+    border-bottom: 1px solid #000000 !important;
+    padding-bottom: 2px !important;
+}
+
+body[class*="theme-doctor"] .gallery-btn {
+    border: 1px solid #000000 !important;
+    background: rgba(0, 0, 0, 0.05) !important;
+}
+
+body[class*="theme-doctor"] .gallery-btn:hover {
+    border-color: #ffffff !important;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.6) !important;
+}
+
+body[class*="theme-doctor"] .sidebar .accordion-item.active > .accordion-header,
+body[class*="theme-doctor"] .sidebar .accordion-item.active > .accordion-header .accordion-icon {
+    color: #000000 !important;
+    text-shadow: 0 0 10px #ffffff !important;
+}
+
+body[class*="theme-doctor"] .sidebar-divider,
+body[class*="theme-doctor"] .nav-divider {
+    background-color: #000000 !important;
+    opacity: 0.2 !important;
+}
+
+body[class*="theme-doctor"] .page hr,
+body[class*="theme-doctor"] .page .divider {
+    border: none !important;
+    border-bottom: 1px solid #000000 !important;
+    opacity: 0.3 !important; 
+    margin: 20px 0 !important; 
+}
+
+body[class*="theme-doctor"] .chapter-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ПРОРЫВ ТРАВМЫ */
+body[class*="theme-doctor"] #theme-patient:hover {
+    color: var(--deep-red) !important; 
+    text-shadow: 0 0 10px rgba(102, 0, 0, 0.8) !important; 
+    background: transparent !important; 
+}
+
+/* =========================================
+   4. БУДУЩАЯ ТЕМА (Например, для другого персонажа)
+   ========================================= */
+
+    /* Здесь будут новые стили */
+

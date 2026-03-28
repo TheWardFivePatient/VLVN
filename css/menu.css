@@ -1,0 +1,753 @@
+:root {
+    --bg-color: #0d0d0d;
+    --gold: #c5a059;
+    --gold-dim: #8a6d3b;
+    --text-color: #e0e0e0;
+    --deep-red: #660000;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #000;
+    color: var(--text-color);
+    font-family: 'Cormorant Garamond', serif;
+    overflow: hidden; 
+    user-select: none;
+    opacity: 0;
+    animation: fadeInSite 2.5s ease-in-out forwards;
+    transition: background 2s ease;
+}
+
+@keyframes fadeInSite {
+    to { opacity: 1; }
+}
+
+
+/* === УПРАВЛЕНИЕ ЭКРАНАМИ === */
+.screen {
+    display: none;
+    min-height: 100vh;
+    width: 100%;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0; left: 0;
+}
+
+.screen.active {
+    display: flex;
+    opacity: 1;
+    z-index: 10;
+}
+
+/* === ЭКРАН 1: ИНТРО === */
+#screen-intro {
+    /* 1. Настройка отображения самого экрана (из нижнего блока) */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    /* 2. Твоя строка с градиентом и фото */
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.8)), url('cover-0.webp');
+    
+    /* 3. Магия центрирования и размера */
+    background-size: auto 100vh;    /* Высота — 85% экрана, ширина подстроится сама */
+    background-position: center;   /* Ровно по центру */
+    background-repeat: no-repeat;  /* Запрещаем картинке дублироваться */
+    
+    /* 4. Цвет фона по бокам */
+    background-color: #0d0d0d;
+}
+
+.intro-titles {
+    text-align: center;
+    margin-bottom: 12vh;
+}
+
+#screen-intro h1 {
+    font-size: 8.5rem;
+    font-weight: 700; 
+    letter-spacing: 20px;
+    margin-bottom: -15px; 
+    
+    background: linear-gradient(to bottom, #f5d78d 0%, #c5a059 40%, #8a6d3b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.9));
+}
+
+.intro-sub { 
+    font-family: 'Great Vibes', cursive; 
+    font-size: 3.5rem; 
+    color: #e3cca1;
+    opacity: 0.9;
+}
+
+.intro-action {
+    text-align: center;
+}
+
+.click-dive {
+    font-size: 2rem; 
+    color: var(--gold); 
+    cursor: pointer;
+    text-transform: uppercase; 
+    letter-spacing: 5px;
+    transition: text-shadow 0.3s, transform 0.3s;
+    animation: pulseDive 3s infinite ease-in-out;
+}
+
+.click-dive:hover { 
+    text-shadow: 0 0 25px rgba(197, 160, 89, 1); 
+    transform: scale(1.05); 
+    animation-play-state: paused;
+}
+
+@keyframes pulseDive {
+    0%, 100% { opacity: 0.8; text-shadow: 0 0 5px rgba(197, 160, 89, 0.4); }
+    50% { opacity: 1; text-shadow: 0 0 18px rgba(197, 160, 89, 0.9); }
+}
+
+.hint { 
+    font-size: 1rem; 
+    margin-top: 15px; 
+    font-style: italic; 
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 1px;
+    animation: pulseHint 2s infinite ease-in-out;
+}
+
+@keyframes pulseHint {
+    0% { opacity: 0.2; }
+    50% { opacity: 0.9; text-shadow: 0 0 10px rgba(255, 255, 255, 0.6); }
+    100% { opacity: 0.2; }
+}
+
+/* === ВЫБОР ЯЗЫКА === */
+.language-selector {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px; 
+    margin: 40px 0; 
+    opacity: 0;
+    animation: fadeInLang 2s ease-in-out 1.5s forwards; 
+}
+
+@keyframes fadeInLang {
+    to { opacity: 1; }
+}
+
+.lang-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: rgba(224, 224, 224, 0.7); 
+    transition: all 0.4s ease;
+    cursor: pointer;
+    position: relative; 
+    padding-bottom: 25px; 
+}
+
+.lang-title {
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.4s ease, text-shadow 0.4s ease;
+}
+
+.lang-title.text-lowercase {
+    text-transform: none;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+}
+
+/* === ИКОНКИ ФЛАГОВ === */
+.flag-icon {
+    width: 20px; 
+    height: auto; 
+    vertical-align: middle; 
+    margin-right: 8px; 
+    filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)); 
+}
+
+.ru-custom-icon {
+    width: 22px; 
+    opacity: 0.9;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.ru-title-container {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap; 
+}
+
+/* === ВЫПЛЫВАЮЩИЙ СТАТУС === */
+.lang-sub {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1em; 
+    color: var(--gold-dim);
+    position: absolute;
+    bottom: -1em;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: all 0.5s ease;
+    white-space: nowrap;
+}
+
+.lang-line {
+    width: 1px;
+    height: 35px;
+    background: linear-gradient(to bottom, transparent, var(--gold-dim), transparent);
+    opacity: 0.4;
+    margin-bottom: 25px; 
+}
+
+/* === ЭФФЕКТЫ ПРИ НАВЕДЕНИИ === */
+.lang-item:hover {
+    transform: translateY(-3px);
+}
+
+.lang-item:hover .lang-title {
+    color: var(--gold);
+    text-shadow: 0 0 15px rgba(197, 160, 89, 0.6);
+}
+
+.lang-item:hover .lang-sub {
+    opacity: 1;
+    transform: translateY(0); 
+    color: #f5d78d; 
+}
+
+.lang-item.disabled {
+    cursor: not-allowed;
+    opacity: 0.4; 
+}
+
+.lang-item.disabled:hover {
+    transform: none; 
+}
+
+.lang-item.active {
+    opacity: 0.85;
+}
+
+.lang-item.active:hover .ru-custom-icon {
+    transform: scale(1.1); 
+    filter: drop-shadow(0 0 5px var(--gold)); 
+}
+
+/* === АВТОР И ПОДСКАЗКА (Адаптивные стили) === */
+
+.hint {
+    margin-top: clamp(0.5rem, 2vh, 1.5rem); /* Гибкий отступ от кнопки */
+    font-size: clamp(0.75rem, 1vw, 0.9rem);
+    opacity: 0.5;
+}
+
+.intro-author { 
+    /* Никаких absolute! Он должен стоять в потоке под хинтом */
+    position: relative; 
+    margin-top: clamp(1.5rem, 4vh, 3rem); /* Гибкая дистанция вниз */
+    font-size: clamp(0.9rem, 1.2vw, 1.2rem); 
+    color: var(--gold-dim); 
+    letter-spacing: 0.25em; /* Используем em для межбуквенного интервала */
+    opacity: 0.8;
+}
+
+/* === МАГИЯ НИЖНЕГО БАРА ЯЗЫКОВ === */
+.language-selector.footer-logic {
+    position: absolute;
+    bottom: clamp(1.5rem, 5vh, 3rem); /* Прижимаем ко дну экрана адаптивно */
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: fit-content;
+    gap: clamp(1.5rem, 4vw, 3rem); /* Воздушное расстояние между языками */
+    padding-bottom: 0;
+}
+
+.language-selector.footer-logic .lang-item {
+    padding-bottom: clamp(1rem, 2vh, 1.5rem); /* Место для выплывающего статуса */
+}
+
+/* ============================================================== ЭФФЕКТ ПРОЛЕТА СКВОЗЬ ЭКРАН === */
+.diving-through {
+    animation: diveThrough 1.5s cubic-bezier(0.5, 0, 0.1, 1) forwards;
+    pointer-events: none;
+}
+
+@keyframes diveThrough {
+    0% { transform: scale(1); opacity: 1; filter: blur(0); }
+    40% { opacity: 1; }
+    100% { transform: scale(15); opacity: 0; filter: blur(8px); }
+}
+
+
+/* === ЭКРАН 2: ЗАГРУЗКА (Эффект полета сквозь имена) === */
+#screen-loading { 
+    background-color: black; 
+    overflow: hidden; 
+    perspective: 1000px;
+    perspective-origin: center center;
+}
+
+.floating-name {
+    position: absolute; 
+    color: rgba(197, 160, 89, 0.8);
+    font-size: 2rem; 
+    font-style: italic; 
+    font-weight: 700;
+    opacity: 0;
+    text-transform: uppercase;
+    white-space: nowrap;
+    animation-name: flyThrough;
+    animation-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+    animation-fill-mode: forwards;
+}
+
+@keyframes flyThrough {
+    0% { transform: translate3d(0, 0, -1500px) scale(0.5); opacity: 0; }
+    20% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { transform: translate3d(0, 0, 800px) scale(4); opacity: 0; }
+}
+
+/* === ЭКРАН 3: МЕНЮ === */
+#screen-menu h2 {
+    font-size: 3rem;
+    color: var(--gold);
+    margin-bottom: 1.2rem; 
+    border-bottom: 1px solid var(--gold-dim); 
+    padding-bottom: 0.55rem; 
+}
+
+.book-list {
+    list-style: none;
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+.book-item {
+    margin: 20px 0;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.book-title {
+    font-size: 1.8rem;
+    transition: color 0.4s, transform 0.4s;
+    display: inline-block;
+}
+
+.book-item:hover .book-title {
+    color: var(--gold);
+    transform: translateX(10px);
+}
+
+.book-details {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.6s ease, opacity 0.6s ease, margin-top 0.6s ease;
+    width: 90%;
+    text-align: center;
+}
+
+.book-item:hover .book-details {
+    max-height: 200px;
+    opacity: 1;
+    margin-top: 15px;
+}
+
+.book-details p {
+    font-size: 1.1rem;
+    color: #a0a0a0;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    font-style: italic;
+}
+
+.book-details strong {
+    color: var(--gold-dim);
+    font-weight: 600;
+    font-style: normal;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+/* === ТИТУЛЬНЫЙ БРЕНДИНГ ВЛВН В МЕНЮ === */
+
+.intro-titles {
+    text-align: center;
+    margin-bottom: 100px;
+}
+
+/* Сама аббревиатура ВЛВН */
+.intro-titles h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 6rem; /* Делаем её действительно огромной */
+    font-weight: 400;
+    color: var(--gold);
+    letter-spacing: 25px; /* Очень широкий разнос букв для эффекта элитарности */
+    margin-right: -25px; /* Компенсируем отступ последней буквы для идеального центра */
+    margin-bottom: 0;
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(197, 160, 89, 0.2); /* Легкое золотое свечение */
+}
+
+/* Расшифровка (Воплощение любви в обмен на...) */
+.intro-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem; /* Делаем её крошечной по сравнению с ВЛВН */
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    letter-spacing: 8px; /* Растягиваем строку, чтобы она гармонировала с шириной ВЛВН */
+    opacity: 0.6;
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   VI. МОБИЛЬНАЯ АДАПТАЦИЯ ДЛЯ ИНТРО (СТРОГО ДО 1024px)
+   ========================================================================== */
+
+/* 1. ВЕРТИКАЛЬНЫЙ РЕЖИМ (Идеальная компановка без скролла) */
+@media (max-width: 1024px) {
+    #screen-intro {
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+        overflow: hidden !important; 
+        padding: 10rem 2rem 1.5rem !important;
+        
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important; 
+        align-items: center !important;
+    }
+
+    .intro-titles, .intro-action {
+        margin: 0 !important;
+    }
+
+    /* 2. Увеличили отступ: расшифровка оторвалась от ВЛВН и ушла ниже */
+    .intro-sub { margin-top: 8dvh !important; }
+    
+    .hint { margin-top: 1dvh !important; }
+    
+    /* 3. Мощный отрыв: Пациент падает ровно между кнопкой и языками */
+    .intro-author { 
+        margin-top: 12dvh !important; 
+        font-size: 0.85rem !important; 
+        letter-spacing: 0.15em !important; 
+    }
+
+    .language-selector.footer-logic {
+        position: relative !important;
+        bottom: auto !important;
+        margin: 0 !important;
+        padding-bottom: 2.5rem !important; 
+        gap: 1.5rem !important;
+    }
+
+    #screen-intro h1 {
+        font-size: clamp(3.5rem, 12vw, 4rem) !important; 
+        letter-spacing: 0.1em !important;
+        line-height: 1 !important;
+    }
+
+        .lang-sub { 
+        display: block !important; /* Вместо none ставим block */
+        font-size: 0.7rem !important; /* Делаем чуть меньше, чтобы сэкономить место */
+        bottom: -0.5em !important; /
+    }
+
+    .intro-sub { font-size: clamp(1rem, 4vw, 1.4rem) !important; }
+    .click-dive { font-size: clamp(1.1rem, 4.5vw, 1.5rem) !important; }
+    .hint { font-size: 0.75rem !important; }
+}
+
+/* 2. ГОРИЗОНТАЛЬНЫЙ РЕЖИМ (Ландшафт - сплющенный экран) */
+@media (max-width: 1024px) and (max-height: 500px) {
+    #screen-intro {
+        /* 1. ВЛВН взлетает вверх: оставляем микроскопический отступ от верхнего края */
+        padding: 6dvh 0 3dvh 0 !important; 
+        justify-content: space-between !important; 
+    }
+    
+    #screen-intro h1 { 
+        font-size: clamp(2rem, 15dvh, 3.5rem) !important; 
+        line-height: 1 !important;
+    }
+    
+    /* 2. Расшифровка отрывается от ВЛВН и падает ниже */
+    .intro-sub { 
+        font-size: 0.9rem !important; 
+        margin-top: 10dvh !important; 
+    }
+    
+    /* 3. Пациент отталкивается от кнопки погружения и зависает над языками */
+    .intro-author { 
+        margin-top: 10dvh !important; 
+        font-size: 0.75rem !important;
+    }
+    
+    .language-selector.footer-logic { 
+        padding-bottom: 0.5rem !important; 
+        margin-bottom: 1rem !important;
+    }
+    
+    .lang-sub { 
+        display: block !important; /* Вместо none ставим block */
+        font-size: 0.5rem !important; /* Делаем чуть меньше, чтобы сэкономить место */
+        bottom: -0.5em !important; /
+    }
+}
+
+/* ==========================================================================
+   Примечание! (Чистый стиль)
+   ========================================================================== */
+
+/* 1. Контейнер: парение */
+.note-trigger {
+    /* Уменьшаем отступ сверху, так как над ним теперь есть h2 */
+    margin-top: 0.15rem; 
+    /* Оставляем или чуть уменьшаем отступ снизу до книг */
+    margin-bottom: 0.2rem;
+    cursor: pointer;
+    text-align: center;
+    animation: floatInvite 4s ease-in-out infinite;
+}
+
+@keyframes floatInvite {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+/* 2. Только та "травма", что внутри триггера примечания */
+.note-trigger .trauma {
+    color: var(--deep-red); 
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+    letter-spacing: 5px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    
+    /* Гипнотическое дыхание только для этой кнопки */
+    animation: hypnoticPulse 3s ease-in-out infinite;
+}
+
+/* 3. Реакция на наведение (только здесь) */
+.note-trigger:hover .trauma {
+    color: #990000;
+    text-shadow: 0 0 20px rgba(153, 0, 0, 0.9), 0 0 10px rgba(255, 255, 255, 0.2);
+    transform: scale(1.08);
+    letter-spacing: 8px;
+    animation: none; /* Замирает при контакте */
+}
+
+/* 4. Анимация пульсации */
+@keyframes hypnoticPulse {
+    0%, 100% {
+        letter-spacing: 5px;
+        text-shadow: 0 0 8px rgba(102, 0, 0, 0.4);
+        opacity: 0.85;
+    }
+    50% {
+        letter-spacing: 5.5px;
+        text-shadow: 0 0 15px rgba(153, 0, 0, 0.8), 0 0 25px rgba(197, 160, 89, 0.3);
+        opacity: 1;
+    }
+}
+
+/* Возвращаем глубину запекшейся крови и элитарный массивный ореол */
+.note-body .trauma {
+    display: inline-block;
+    animation: none;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    
+    /* Используем экстремально глубокий красный, почти черный в базе */
+    color: #580707; 
+    
+    /* Слоистое свечение: густая кровь -> старое золото */
+    text-shadow: 
+        1px 1px 2px rgba(0, 0, 0, 0.8),    /* Жесткий контур, чтобы буквы не "плыли" */
+        0 0 12px rgba(74, 4, 4, 0.9),      /* Облако "запекшейся крови" вокруг */
+        0 0 25px rgba(197, 160, 89, 0.15), /* Очень тусклое, дорогое золото в глубине */
+        0 0 40px rgba(197, 160, 89, 0.05); /* Едва заметный шлейф богатства */
+    
+    cursor: default;
+    transition: all 0.6s ease;
+    
+    /* Убираем brightness! Вместо него добавляем контраст, чтобы металл "звенел" */
+    filter: contrast(1.2); 
+}
+
+/* При наведении: эффект "тяжелого взгляда" */
+.note-body .trauma:hover {
+    color: #790101; /* Чуть проявляется цвет при "освещении" курсором */
+    filter: contrast(1.4) brightness(0.9); /* Металл становится четче, но не светлее */
+    text-shadow: 
+        0 0 15px rgba(74, 4, 4, 1), 
+        0 0 30px rgba(197, 160, 89, 0.2);
+}
+
+/* Окно примечания */
+.note-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+.note-overlay.active { display: flex; opacity: 1; }
+
+.note-content {
+    background: #0a0a0a;
+    border: 1px solid rgba(197, 160, 89, 0.2);
+    padding: clamp(30px, 6vw, 60px);
+    max-width: 650px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 0 60px rgba(0,0,0,1);
+}
+
+.note-close {
+    position: absolute;
+    top: 20px; right: 25px;
+    font-size: 2rem;
+    color: var(--gold-dim);
+    cursor: pointer;
+    font-family: Arial, sans-serif; /* Для простоты крестика */
+}
+
+/* --- ТИПОГРАФИКА ПРИМЕЧАНИЯ --- */
+
+/* 1. Красивый строгий шрифт (Cormorant Garamond) */
+.note-greeting, .note-final {
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--gold);
+    font-size: 1.8rem;
+    text-align: center;
+    letter-spacing: 2px;
+}
+.note-greeting { margin-bottom: 30px; }
+.note-final { margin-top: 40px; font-size: 2.2rem; }
+
+/* 2. Заголовок (Cormorant Garamond) */
+.note-main-title {
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--gold);
+    font-size: 1.6rem;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-bottom: 30px;
+    text-align: center;
+    border-bottom: 1px solid rgba(197, 160, 89, 0.3);
+    padding-bottom: 15px;
+}
+
+/* 3. Подзаголовки (Courier Prime) */
+.note-label {
+    font-family: 'Courier Prime', monospace;
+    color: var(--gold-dim);
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+/* 4. Основной текст (Lora) */
+.note-text {
+    font-family: 'Lora', serif;
+    color: #cccccc;
+    line-height: 1.7;
+    font-size: 1.05rem;
+    text-align: justify;
+    margin-bottom: 20px;
+}
+
+/* Разделитель перед подвалом */
+.note-divider {
+    width: 70%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+    margin: 40px auto;
+    opacity: 0.5;
+}
+
+/* --- СТИЛИ ДЛЯ КОПИРОВАНИЯ ПОЧТЫ И РЕКВИЗИТОВ --- */
+.note-footer { text-align: left; }
+
+.email-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.email-copy {
+    color: #fff;
+    cursor: pointer;
+    border-bottom: 1px dashed #fff;
+    transition: all 0.3s ease;
+    margin-bottom: 0; /* Убираем отступ, чтобы стояло в линию со "Скопировано!" */
+}
+
+.email-copy:hover {
+    color: var(--deep-red);
+    border-bottom: 1px dashed #fff;
+    transform: translateX(5px);
+}
+
+.copy-tooltip {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.85rem;
+    color: #751e13;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.copy-tooltip.show { opacity: 1; }
+
+.finance-details p { margin-bottom: 5px; }
+.finance-details span { color: var(--gold-dim); font-family: 'Courier Prime', monospace; }
+
+/* Скроллбар для окна примечания */
+.note-content::-webkit-scrollbar { width: 3px; }
+.note-content::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+
+.trauma { 
+    color: var(--deep-red); 
+    text-shadow: 0 0 10px rgba(102, 0, 0, 0.3);
+}
