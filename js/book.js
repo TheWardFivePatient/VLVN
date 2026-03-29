@@ -482,6 +482,10 @@ function changePageMobile(direction) {
 
     if (nextIdx >= 0 && nextIdx < pages.length) {
         isAnimating = true; // ЗАКРЫВАЕМ ЗАМОК
+
+        // === ВОТ ЭТУ СТРОКУ НУЖНО ДОБАВИТЬ ===
+        if (typeof playSound === 'function') playSound('audio-page-flip', 0.3);
+        // =====================================
         
         const nextPage = pages[nextIdx];
 
@@ -734,6 +738,8 @@ document.addEventListener('visibilitychange', () => {
 
 // === ФУНКЦИЯ ПЛАВНОГО ПЕРЕХОДА МЕЖДУ ФАЙЛАМИ ===
 function transitionToFile(targetFileName, startPageIndex = 0) {
+    // Добавь звук перехода, если он нужен
+    if (typeof playSound === 'function') playSound('audio-page-flip', 0.3);
     document.body.classList.add('fade-out-site');
     const delay = (currentFile === 'html_0.html') ? 1200 : 800; 
     setTimeout(() => {
