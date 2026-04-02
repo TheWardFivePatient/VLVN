@@ -531,6 +531,7 @@ p.no-indent {
     color: var(--gold);
     cursor: help;
     position: relative;
+    z-index: 30;
     font-weight: bold;
     text-decoration: none;
     padding: 0 0.2em;
@@ -557,7 +558,7 @@ p.no-indent {
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 1000;
+    z-index: 30;
     pointer-events: none;        /* Окно не мешает курсору */
     
     /* Возвращаем книжные стили внутри подсказки */
