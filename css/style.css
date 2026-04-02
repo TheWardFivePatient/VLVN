@@ -545,7 +545,7 @@ p.no-indent {
     bottom: 1.8em;               /* Позиция над текстом */
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(13, 13, 13, 0.98); /* Почти черный фон */
+    background: #0d0d0d;
     color: var(--text-color);
     padding: 0.5rem 0.7rem;      /* px -> rem для стабильности */
     border: 1px solid var(--gold); /* Линия строго в px */
