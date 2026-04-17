@@ -138,25 +138,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Копирование почты по клику
-    const copyEmailBtn = document.getElementById('copy-email');
-    const copyTooltip = document.getElementById('copy-tooltip');
+// Находим все элементы для копирования
+const copyElements = document.querySelectorAll('.js-copy-text');
 
-    if (copyEmailBtn && copyTooltip) {
-        copyEmailBtn.addEventListener('click', () => {
-            // Копируем текст
-            navigator.clipboard.writeText(copyEmailBtn.innerText).then(() => {
-                // Показываем надпись "Скопировано!"
-                copyTooltip.classList.add('show');
-                
-                // Прячем надпись через 2.5 секунды
-                setTimeout(() => {
-                    copyTooltip.classList.remove('show');
-                }, 2500);
-            }).catch(err => {
-                console.error('Не удалось скопировать текст: ', err);
-            });
+copyElements.forEach(element => {
+    element.addEventListener('click', function() {
+        const textToCopy = this.innerText;
+        const tooltip = this.parentElement.querySelector('.js-tooltip');
+
+        // Копирование в буфер
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            // Показываем тултип именно этого элемента
+            tooltip.classList.add('visible'); // Или ваш метод показа (style.opacity = 1 и т.д.)
+            
+            // Скрываем через 2 секунды
+            setTimeout(() => {
+                tooltip.classList.remove('visible');
+            }, 2000);
         });
-    }
+    });
+});
 
 });
