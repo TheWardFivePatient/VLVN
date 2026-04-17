@@ -138,25 +138,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-// Находим все элементы для копирования
+// Находим все элементы для копирования (почта, инстаграм и т.д.)
 const copyElements = document.querySelectorAll('.js-copy-text');
 
 copyElements.forEach(element => {
     element.addEventListener('click', function() {
         const textToCopy = this.innerText;
+        // Ищем тултип именно внутри того же контейнера, где лежит текст
         const tooltip = this.parentElement.querySelector('.js-tooltip');
 
         // Копирование в буфер
         navigator.clipboard.writeText(textToCopy).then(() => {
-            // Показываем тултип именно этого элемента
-            tooltip.classList.add('visible'); // Или ваш метод показа (style.opacity = 1 и т.д.)
-            
-            // Скрываем через 2 секунды
-            setTimeout(() => {
-                tooltip.classList.remove('visible');
-            }, 2000);
+            if (tooltip) {
+                // Используем старое название класса "show", которое у вас уже прописано в CSS
+                tooltip.classList.add('show'); 
+                
+                // Скрываем через 2.5 секунды (как было раньше)
+                setTimeout(() => {
+                    tooltip.classList.remove('show');
+                }, 2500);
+            }
+        }).catch(err => {
+            console.error('Не удалось скопировать: ', err);
+            });
         });
     });
-});
-
+    
 });
