@@ -32,12 +32,15 @@ body {
 .screen {
     display: none;
     min-height: 100vh;
+    max-height: 100dvh; /* Ограничиваем высоту экраном девайса */
     width: 100%;
     opacity: 0;
     transition: opacity 1.5s ease-in-out;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: center; /* Если контент большой, скролл появится автоматически */
+    overflow-y: auto; /* Включаем вертикальный скролл */
+    overflow-x: hidden; /* Прячем горизонтальный, чтобы не было смещений */
     position: absolute;
     top: 0; left: 0;
 }
@@ -46,6 +49,25 @@ body {
     display: flex;
     opacity: 1;
     z-index: 10;
+}
+
+/* === ЗОЛОТОЙ СКРОЛЛБАР (ГЛОБАЛЬНЫЙ) === */
+::-webkit-scrollbar {
+    width: 4px; /* Тонкий и изящный для мобильных устройств */
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(13, 13, 13, 0.8); /* Сливается с темным фоном */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, var(--gold-dim), var(--gold), var(--gold-dim));
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #f5d78d; /* Яркое свечение при касании/наведении */
 }
 
 /* === ЭКРАН 1: ИНТРО === */
@@ -742,10 +764,6 @@ body {
 
 .finance-details p { margin-bottom: 5px; }
 .finance-details span { color: var(--gold-dim); font-family: 'Courier Prime', monospace; }
-
-/* Скроллбар для окна примечания */
-.note-content::-webkit-scrollbar { width: 3px; }
-.note-content::-webkit-scrollbar-thumb { background: var(--gold-dim); }
 
 .trauma { 
     color: var(--deep-red); 
