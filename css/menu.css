@@ -45,12 +45,6 @@ body {
     top: 0; left: 0;
 }
 
-#screen-menu {
-    justify-content: flex-start; 
-    padding-top: 12vh; /* Відступ зверху, щоб заголовок не прилипав до краю екрана */
-    padding-bottom: 10vh;
-}
-
 .screen.active {
     display: flex;
     opacity: 1;
