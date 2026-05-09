@@ -1,18 +1,41 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-// === ЛОГИКА ВОЗВРАТА ИЗ КНИГИ ===
+    // === 0. ПРИНУДИТЕЛЬНОЕ ПРОБУЖДЕНИЕ (Фикс черного экрана) ===
+    document.body.style.opacity = '1';
+    const introScreen = document.getElementById('screen-intro');
+    if (introScreen) {
+        introScreen.style.display = 'flex';
+        introScreen.style.opacity = '1';
+    }
+
+    // === 1. ОПРЕДЕЛЕНИЕ ТЕКУЩЕГО ЯЗЫКА ===
+    const currentLang = document.documentElement.lang === 'uk' ? 'uk' : 'ru';
+    const book1Path = `${currentLang}/book1/html_0.html`;
+
+    // === 2. ПЕРЕКЛЮЧАТЕЛИ ЯЗЫКОВ ===
+    const btnLangUk = document.getElementById('btn-lang-uk');
+    const btnLangRu = document.getElementById('btn-lang-ru');
+
+    const changeLang = (targetFile) => {
+        document.body.style.transition = 'opacity 0.4s';
+        document.body.style.opacity = '0';
+        setTimeout(() => { window.location.replace(targetFile); }, 400);
+    };
+
+    if (btnLangUk) btnLangUk.addEventListener('click', () => changeLang('index-uk.html'));
+    if (btnLangRu) btnLangRu.addEventListener('click', () => changeLang('index.html'));
+
+    // === 3. ЛОГИКА ВОЗВРАТА ИЗ КНИГИ ===
     if (window.location.search.includes('skipIntro=true')) {
-        // Скрываем Интро
-        const intro = document.getElementById('screen-intro');
-        if (intro) {
-            intro.classList.remove('active');
-            intro.style.display = 'none';
+        if (introScreen) {
+            introScreen.classList.remove('active');
+            introScreen.style.display = 'none';
         }
-        // Сразу показываем Выбор книг
         const menu = document.getElementById('screen-menu');
         if (menu) {
             menu.classList.add('active');
-            menu.style.opacity = '1';
+            menu.style.display = 'flex';
+            setTimeout(() => { menu.style.opacity = '1'; }, 50);
         }
     }
 
@@ -25,43 +48,49 @@ document.addEventListener('DOMContentLoaded', () => {
         from.style.opacity = '0';
         setTimeout(() => {
             from.classList.remove('active');
+            from.style.display = 'none'; // Надежно прячем старый
+            
+            to.style.display = 'flex';   // Надежно показываем новый
             to.classList.add('active');
             setTimeout(() => { to.style.opacity = '1'; }, 50);
         }, 1000);
     }
 
-    // Экран 1: Погружение
+    // === 4. ЭФФЕКТ ПОГРУЖЕНИЯ ===
     const btnDive = document.getElementById('btn-dive');
     if (btnDive) {
         btnDive.addEventListener('click', () => {
-            const intro = document.getElementById('screen-intro');
             const loading = document.getElementById('screen-loading');
+            if (!introScreen || !loading) return;
 
-            // Убираем анимацию появления у экрана загрузки, чтобы он возник мгновенно
             loading.style.transition = 'none'; 
             loading.classList.add('active');
+            loading.style.display = 'flex';
             loading.style.opacity = '1';
 
-            // Запускаем имена в ту же миллисекунду
             startGlitchEffect();
 
-            // А интро пусть плавно уезжает (zoom)
-            intro.classList.add('diving-through');
+            introScreen.classList.add('diving-through');
             setTimeout(() => {
-                intro.classList.remove('active', 'diving-through');
-                intro.style.opacity = '0';
-                // Возвращаем плавность экранам для следующих переходов
+                introScreen.classList.remove('active', 'diving-through');
+                introScreen.style.display = 'none';
                 loading.style.transition = 'opacity 1.5s ease-in-out';
             }, 1000);
         });
     }
 
     // Эффект загрузки (Имена + переход)
-    function startGlitchEffect() {
-        const names = ["Джессика", "Фрэнсис", "Альба", "Кристиан", "Джон", "Вероника", "Диана", "Марго", "Стефан", "Эллис", "Алиса", "Элиза"];
+function startGlitchEffect() {
+        // Списки імен для обох мов
+        const namesRu = ["Джессика", "Фрэнсис", "Альба", "Кристиан", "Джон", "Вероника", "Диана", "Марго", "Стефан", "Эллис", "Алиса", "Элиза", "Аарон"];
+        const namesUk = ["Джессіка", "Френсіс", "Альба", "Крістіан", "Джон", "Вероніка", "Діана", "Марго", "Стефан", "Елліс", "Аліса", "Еліза", "Аарон"];
+
+        // Вибираємо потрібний список (currentLang визначена вище в скрипті)
+        const names = currentLang === 'uk' ? namesUk : namesRu;
+
         const loading = document.getElementById('screen-loading');
+        if (!loading) return;
         
-        // Создаем интервал вылета имен
         let interval = setInterval(() => {
             const span = document.createElement('span');
             span.classList.add('floating-name');
@@ -71,60 +100,52 @@ document.addEventListener('DOMContentLoaded', () => {
             span.style.fontSize = (Math.random() * 2 + 1.5) + 'rem';
             const duration = Math.random() * 2 + 2.5;
             span.style.animationDuration = duration + 's';
+            
+            // ВОЗВРАЩЕНО: Твоя двойная страховка удаления
             span.addEventListener('animationend', () => span.remove());
             loading.appendChild(span);
             setTimeout(() => span.remove(), duration * 1000);
         }, 80);
 
-        // Останавливаем через 3 секунды и переходим в меню
         setTimeout(() => {
             clearInterval(interval);
             setTimeout(() => {
                 switchScreen('screen-loading', 'screen-menu');
-            }, 2500); // Ждем пока последние имена долетят
+            }, 2500); 
         }, 3000);
     }
 
-// === ПРЕДЗАГРУЗКА ВСТУПЛЕНИЯ КНИГИ ===
-    // Как только меню загрузилось, тихонько скачиваем файл html_0.html
+    // === 5. ПРЕДЗАГРУЗКА И ПЕРЕХОД ===
     setTimeout(() => {
         const prefetchHtml0 = document.createElement('link');
         prefetchHtml0.rel = 'prefetch';
-        prefetchHtml0.href = 'ru/book1/html_0.html';
+        prefetchHtml0.href = book1Path;
         document.head.appendChild(prefetchHtml0);
-    }, 2000); // Ждем 2 секунды после входа, чтобы не тормозить анимации меню
+    }, 2000); 
 
-// === КЛИК ПО КНИГЕ 1 -> ПЛАВНЫЙ ПЕРЕХОД ===
     const book1 = document.getElementById('book-1');
     if (book1) {
         book1.addEventListener('click', () => {
             const menu = document.getElementById('screen-menu');
-            menu.style.opacity = '0'; // Плавно гасим меню
-            
-            setTimeout(() => {
-                // Переходим на загруженный в кэш файл
-                window.location.href = 'ru/book1/html_0.html';
-            }, 1000); // Ждем 1 секунду, пока идет затухание
+            menu.style.opacity = '0'; 
+            setTimeout(() => { window.location.href = book1Path; }, 1000); 
         });
     }
 
-
-// === ПРИМЕЧАНИЕ===    
-
-// Логика окна "Примечание"
-    const openNote = document.getElementById('open-note');
-    const closeNote = document.getElementById('close-note');
+    // === 6. МОДАЛЬНОЕ ОКНО "ПРИМЕЧАНИЕ" ===
+    const btnAuthor = document.getElementById('open-note');
+    const btnCloseNote = document.getElementById('close-note');
     const noteOverlay = document.getElementById('note-overlay');
 
-    if (openNote && noteOverlay) {
-        openNote.addEventListener('click', () => {
+    if (btnAuthor && noteOverlay) {
+        btnAuthor.addEventListener('click', () => {
             noteOverlay.style.display = 'flex';
             setTimeout(() => noteOverlay.classList.add('active'), 10);
         });
     }
 
-    if (closeNote && noteOverlay) {
-        closeNote.addEventListener('click', () => {
+    if (btnCloseNote && noteOverlay) {
+        btnCloseNote.addEventListener('click', () => {
             noteOverlay.classList.remove('active');
             setTimeout(() => noteOverlay.style.display = 'none', 600);
         });
@@ -138,30 +159,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-// Находим все элементы для копирования (почта, инстаграм и т.д.)
-const copyElements = document.querySelectorAll('.js-copy-text');
+    // === 7. КОПИРОВАНИЕ КОНТАКТОВ ===
+    const copyElements = document.querySelectorAll('.js-copy-text');
 
-copyElements.forEach(element => {
-    element.addEventListener('click', function() {
-        const textToCopy = this.innerText;
-        // Ищем тултип именно внутри того же контейнера, где лежит текст
-        const tooltip = this.parentElement.querySelector('.js-tooltip');
+    copyElements.forEach(element => {
+        element.addEventListener('click', function() {
+            const textToCopy = this.innerText;
+            const tooltip = this.parentElement.querySelector('.js-tooltip');
 
-        // Копирование в буфер
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            if (tooltip) {
-                // Используем старое название класса "show", которое у вас уже прописано в CSS
-                tooltip.classList.add('show'); 
-                
-                // Скрываем через 2.5 секунды (как было раньше)
-                setTimeout(() => {
-                    tooltip.classList.remove('show');
-                }, 2500);
-            }
-        }).catch(err => {
-            console.error('Не удалось скопировать: ', err);
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                if (tooltip) {
+                    tooltip.classList.add('show'); 
+                    setTimeout(() => {
+                        tooltip.classList.remove('show');
+                    }, 2500);
+                }
+            // ВОЗВРАЩЕНО: Твой обработчик ошибок
+            }).catch(err => {
+                console.error('Не удалось скопировать: ', err);
             });
         });
     });
-    
+
 });

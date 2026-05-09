@@ -590,9 +590,14 @@ if (sidebar) {
     }
 }
 
-// === КНОПКИ ВОЗВРАТА И УПРАВЛЕНИЯ ===
+// === КНОПКИ ВОЗВРАТА И УПРАВЛЕНИЯ (УМНЫЕ ССЫЛКИ) ===
 
-// Кнопка возврата на главный лендинг
+// Определяем, какую главную страницу открывать (index или index-uk)
+const isUk = document.documentElement.lang === 'uk';
+const homeUrl = isUk ? '../../index-uk.html' : '../../index.html';
+const menuUrl = isUk ? '../../index-uk.html?skipIntro=true' : '../../index.html?skipIntro=true';
+
+// Кнопка возврата на главный лендинг (на самый первый экран)
 document.getElementById('btn-to-main-landing')?.addEventListener('click', function() {
     playSound('audio-book-close', 0.8);
     if (typeof theme !== 'undefined' && theme) fadeAudioOut(theme);
@@ -606,17 +611,18 @@ document.getElementById('btn-to-main-landing')?.addEventListener('click', functi
         mainLanding.style.display = 'flex'; 
         setTimeout(() => { mainLanding.style.opacity = '1'; }, 50);
     } else {
-        setTimeout(() => { window.location.href = '../../index.html'; }, 1000);
+        // Теперь ведет на правильную версию главной
+        setTimeout(() => { window.location.href = homeUrl; }, 1000);
     }
-    // Закрываем сайдбар при выходе (используем правильный класс)
     if (sidebar) sidebar.classList.remove('mobile-open');
 });
 
-// Кнопка "Назад в меню"
+// Кнопка "Назад в меню" (сразу к выбору книг)
 document.getElementById('btn-back-to-menu')?.addEventListener('click', () => {
     playSound('audio-book-close', 0.8);
     if (typeof theme !== 'undefined' && theme) fadeAudioOut(theme);
-    setTimeout(() => { window.location.href = '../../index.html?skipIntro=true'; }, 1000);
+    // Теперь ведет на правильную версию выбора книг
+    setTimeout(() => { window.location.href = menuUrl; }, 1000);
 });
 
 // Фуллскрин
