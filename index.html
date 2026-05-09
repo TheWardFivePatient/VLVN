@@ -44,53 +44,48 @@
 </head>
 <body>
 
-    <div id="screen-intro" class="screen active">
-        
-        <!-- 1. ВЕРХ: Название -->
-        <div class="intro-titles">
-            <h1>ВЛВН</h1>
-            <div class="intro-sub">Воплощение любви в обмен на...</div>
+<div id="screen-intro" class="screen active">
+    
+    <div class="intro-titles">
+        <h1>ВЛВН</h1>
+        <div class="intro-sub">Воплощение любви в обмен на...</div>
+    </div>
+    
+    <div class="intro-action">
+        <div class="click-dive" id="btn-dive">Погрузиться в историю</div>
+        <div class="hint">нажмите, чтобы начать</div>
+        <div class="intro-author">by Пациент пятой палаты</div>
+    </div>
+
+    <div class="language-selector footer-logic">
+    
+        <div class="lang-item" id="btn-lang-uk" style="cursor: pointer;">
+            <span class="lang-title">
+                <img src="https://flagcdn.com/w20/ua.png" alt="UA" class="flag-icon"> UA
+            </span>
+            <span class="lang-sub">Доступно</span>
         </div>
-        
-        <!-- 2. ЦЕНТР: Главное действие и Автор -->
-        <div class="intro-action">
-            <div class="click-dive" id="btn-dive">Погрузиться в историю</div>
-            <div class="hint">нажмите, чтобы начать</div>
-            <div class="intro-author">by Пациент пятой палаты</div>
+
+        <div class="lang-line"></div>
+
+        <div class="lang-item disabled">
+            <span class="lang-title">
+                <img src="https://flagcdn.com/w20/gb.png" alt="EN" class="flag-icon"> EN
+            </span>
+            <span class="lang-sub">Unavailable</span>
         </div>
 
-        <!-- 3. НИЗ: Техническая панель языков -->
-        <div class="language-selector footer-logic">
-        
-            <div class="lang-item disabled">
-                <span class="lang-title">
-                    <img src="https://flagcdn.com/w20/ua.png" alt="UA" class="flag-icon"> UA
-                </span>
-                <span class="lang-sub">В розробці</span>
-            </div>
+        <div class="lang-line"></div>
 
-            <div class="lang-line"></div>
-
-            <div class="lang-item disabled">
-                <span class="lang-title">
-                    <img src="https://flagcdn.com/w20/gb.png" alt="EN" class="flag-icon"> EN
-                </span>
-                <span class="lang-sub">Unavailable</span>
-            </div>
-
-            <div class="lang-line"></div>
-
-            <!-- RU (Кликабельный, перезагружает страницу) -->
-            <a href="index.html" class="lang-item active">
-                <span class="lang-title ru-title-container">
-                    <img src="img/icons/ru-flag.webp" alt="RU" class="flag-icon ru-custom-icon"> RU
-                </span>
-                <span class="lang-sub">Доступно</span>
-            </a>
-
+        <div class="lang-item active" id="btn-lang-ru">
+            <span class="lang-title ru-title-container">
+                <img src="img/icons/ru-flag.webp" alt="RU" class="flag-icon ru-custom-icon"> RU
+            </span>
+            <span class="lang-sub">Доступно</span>
         </div>
 
     </div>
+</div>
 
     <div id="screen-loading" class="screen"></div>
 
