@@ -32,17 +32,23 @@ body {
 .screen {
     display: none;
     min-height: 100vh;
-    max-height: 100dvh; /* Ограничиваем высоту экраном девайса */
+    max-height: 100dvh; /* Ограничиваем высоту экраном */
     width: 100%;
     opacity: 0;
     transition: opacity 1.5s ease-in-out;
     flex-direction: column;
     align-items: center;
-    justify-content: center; /* Если контент большой, скролл появится автоматически */
-    overflow-y: auto; /* Включаем вертикальный скролл */
-    overflow-x: hidden; /* Прячем горизонтальный, чтобы не было смещений */
+    justify-content: center;
+    overflow-y: auto; /* Вмикаємо вертикальний скролл */
+    overflow-x: hidden; /* Ховаємо горизонтальний */
     position: absolute;
     top: 0; left: 0;
+}
+
+#screen-menu {
+    justify-content: flex-start; 
+    padding-top: 12vh; /* Відступ зверху, щоб заголовок не прилипав до краю екрана */
+    padding-bottom: 10vh;
 }
 
 .screen.active {
@@ -457,8 +463,6 @@ body {
         max-height: 100dvh !important;
         overflow: hidden !important; 
         padding: 10rem 2rem 1.5rem !important;
-        
-        display: flex !important;
         flex-direction: column !important;
         justify-content: space-between !important; 
         align-items: center !important;
